@@ -6,6 +6,9 @@ node_modules/
 .env.*
 !.env.example
 
+# firebase
+backend/services/auth/config/serviceAccountKey.json
+
 # Logs
 logs/
 *.log
