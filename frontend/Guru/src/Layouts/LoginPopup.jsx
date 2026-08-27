@@ -1,4 +1,19 @@
-const LoginPopup = ( {onClose }) => {
+import { signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "../Services/utils/firebase";
+import api from "../Services/utils/axios.js";
+
+const LoginPopup = ({ onClose }) => {
+
+  const loginApi = async (token) => {
+    const res = await api.post("/api/v1/auth/login", token)
+    return res.data;
+  }
+  const googleAuthentication = async () => {
+    const data = await signInWithPopup(auth, googleProvider);
+    const token = data.user.getIdToken();
+    const res = await loginApi(token);
+    console.log(res)
+  }
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-[#11120D]/80 px-5 backdrop-blur-sm"
@@ -57,6 +72,7 @@ const LoginPopup = ( {onClose }) => {
 
         {/* Google Login */}
         <button
+          onClick={googleAuthentication}
           className="
             mt-8
             flex

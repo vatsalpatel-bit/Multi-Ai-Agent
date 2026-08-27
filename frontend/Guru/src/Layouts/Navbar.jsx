@@ -1,5 +1,5 @@
 import { useState } from "react";
-import LoginPopup from "./LoginPopup";
+import LoginPopup from "./LoginPopup.jsx";
 
 
 const Navbar = () => {

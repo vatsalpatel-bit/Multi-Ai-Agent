@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "concurrently": "^10.0.5"
+  },
+  
+    "scripts": {
+      "backend":"nodemon backend/services/auth/index.js",
+      "frontend":"npm run dev --prefix frontend/guru",
+      "dev":"concurrently \"npm run backend\" \"npm run frontend\" "
+  }
+}
