@@ -11,7 +11,14 @@ app.use(cors({
     credentials: true
 }));
 
-app.use("/api/v1/auth", proxy(process.env.AUTH_SERVICES))
+app.use(
+    "/api/v1/auth",
+    proxy(process.env.AUTH_SERVICE, {
+        proxyReqPathResolver: (req) => {
+            return req.originalUrl;
+        },
+    })
+);
 
 app.get("/", (req, res) => {
     return res.status(200).json({

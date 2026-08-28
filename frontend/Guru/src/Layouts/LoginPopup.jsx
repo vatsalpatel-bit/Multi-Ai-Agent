@@ -5,14 +5,14 @@ import api from "../Services/utils/axios.js";
 const LoginPopup = ({ onClose }) => {
 
   const loginApi = async (token) => {
-    const res = await api.post("/api/v1/auth/login", token)
+    const res = await api.post("/api/v1/auth/login", { token })
     return res.data;
   }
   const googleAuthentication = async () => {
     const data = await signInWithPopup(auth, googleProvider);
-    const token = data.user.getIdToken();
+    const token = await data.user.getIdToken();
     const res = await loginApi(token);
-    console.log(res)
+    console.log(res);
   }
   return (
     <div
