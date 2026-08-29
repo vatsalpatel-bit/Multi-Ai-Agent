@@ -1,50 +1,59 @@
 import { useState } from "react";
-import LoginPopup from "./LoginPopup.jsx";
-
+import Sidebar from "./Sidebar";
+import LoginPopup from "./LoginPopup";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
-    const [showPopUp, setShowPopUp] = useState(false);
-    const [user, setUser] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const user = useSelector((state) => state.user.user);
+  console.log(user);
 
-    return (
-        <>
-            <nav className="h-[82px] border-b border-[#D8CFBC]/10 px-[7%] flex items-center justify-between">
 
-                {/* Logo */}
-                <div className="text-[21px] font-medium tracking-[-0.5px] text-[#FFFBF4]">
-                    <span className="font-semibold text-[#D8CFBC]">AI</span>{" "}
-                    Agent
-                </div>
+  return (
+    <>
+      <nav className="flex h-[82px] items-center justify-between border-b border-[#D8CFBC]/10 px-[5%]">
 
-                {/* Login */}
-                {
-                    user && <button
-                        onClick={() => setShowPopUp(true)}
-                        className="
+        {/* Logo */}
+        <div className="text-[21px] font-medium text-[#FFFBF4]">
+          <span className="font-semibold text-[#D8CFBC]">
+            AI
+          </span>{" "}
+          Agent
+        </div>
+
+        {/* Login */}
+        {!user && (<button
+          onClick={() => setShowLogin(true)}
+          className="
             rounded-full
             border border-[#D8CFBC]/35
-            bg-transparent
-            px-[22px]
-            py-[10px]
+            px-[22px] py-[10px]
             text-sm
             text-[#FFFBF4]
-            transition-all
-            duration-300
+            transition
             hover:bg-[#D8CFBC]
             hover:text-[#11120D]
           "
-                    >
-                        Login
-                    </button>
-                }
+        >
+          Login
+        </button>)}
 
-            </nav>
+      </nav>
 
-            {/* Pop-Up show  */}
-            {showPopUp &&
-                <LoginPopup onClose={() => setShowPopUp(false)} />}
-        </>
-    );
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        onOpen={() => setIsSidebarOpen(true)}
+      />
+
+      {showLogin && (
+        <LoginPopup
+          onClose={() => setShowLogin(false)}
+        />
+      )}
+    </>
+  );
 };
 
 export default Navbar;

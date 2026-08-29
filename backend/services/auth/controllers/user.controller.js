@@ -3,7 +3,7 @@ import app from "../config/firebase.js";
 import User from "../models/user.model.js";
 import redis from "../../../shared/redis/redis.js";
 
-export const userApi = async (req, res) => {
+export const loginApi = async (req, res) => {
     try {
         const { token } = req.body;
         if (!token) {
@@ -27,13 +27,13 @@ export const userApi = async (req, res) => {
             })
         }
         const sessionId = crypto.randomUUID();
-        redis.set(`session-${sessionId}`, JSON.stringify({
+        redis.set(`session:${sessionId}`, JSON.stringify({
             userId: user._id,
             name: user.name,
             email: user.email,
             avatar: user.avatar,
         }), "EX", 7 * 24 * 60 * 60);
-        
+
         res.cookie("session", sessionId, {
             httpOnly: true,
             secure: false,
@@ -45,6 +45,24 @@ export const userApi = async (req, res) => {
             success: true,
             user,
         })
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Server error"
+        })
+    }
+}
+
+export const logoutApi = async (req, res) => {
+    try {
+        const sessionId = req.cookies?.session;
+        await redis.del(`session:${sessionId}`);
+        res.clearCookie("session");
+        res.status(200).json({
+            success: true,
+            message: "Logout successfully."
+        })
+
     } catch (error) {
         return res.status(500).json({
             success: false,

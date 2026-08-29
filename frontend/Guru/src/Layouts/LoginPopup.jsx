@@ -1,18 +1,24 @@
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../Services/utils/firebase";
-import api from "../Services/utils/axios.js";
+import { loginApi } from "../Services/authApi.js";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/slices/userSlice.js";
 
 const LoginPopup = ({ onClose }) => {
+  const dispatch = useDispatch();
 
-  const loginApi = async (token) => {
-    const res = await api.post("/api/v1/auth/login", { token })
-    return res.data;
-  }
   const googleAuthentication = async () => {
-    const data = await signInWithPopup(auth, googleProvider);
-    const token = await data.user.getIdToken();
-    const res = await loginApi(token);
-    console.log(res);
+
+    try {
+      const data = await signInWithPopup(auth, googleProvider);
+      const token = await data.user.getIdToken();
+      const res = await loginApi(token);
+      console.log(res)
+      dispatch(setUser(res.user))
+      onClose();
+    } catch (error) {
+      console.log("Google login failed", error)
+    }
   }
   return (
     <div
