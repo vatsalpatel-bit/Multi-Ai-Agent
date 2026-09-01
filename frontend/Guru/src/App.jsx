@@ -1,28 +1,31 @@
 import { useEffect } from "react";
-import Router from "./Router/Router.jsx"
 import { RouterProvider } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
+import Router from "./Router/Router.jsx";
 import { getUserApi } from "./Services/userApi.js";
-import { useDispatch } from 'react-redux';
-import { setUser } from "./redux/slices/userSlice.js";
+import { setUser, clearUser } from "./redux/slices/userSlice.js";
 
 const App = () => {
-  console.log("Hello")
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchUserApi = async () => {
+    const fetchUser = async () => {
       try {
         const data = await getUserApi();
-        console.log(data.user);
-        dispatch(setUser(data.user));
+
+        dispatch(setUser(data));
+
       } catch (error) {
+        dispatch(clearUser());
         console.log(error)
       }
-    }
-    fetchUserApi();
+    };
+
+    fetchUser();
   }, [dispatch]);
 
-  return <RouterProvider router={Router} />
+  return <RouterProvider router={Router} />;
 };
 
 export default App;

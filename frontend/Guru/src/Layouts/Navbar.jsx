@@ -7,8 +7,6 @@ const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const user = useSelector((state) => state.user.user);
-  console.log(user);
-
 
   return (
     <>

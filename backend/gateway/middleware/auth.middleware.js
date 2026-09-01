@@ -16,6 +16,7 @@ const authMiddleware = async (req, res, next) => {
                 message: "Unathorized"
             });
         };
+
         req.user = JSON.parse(session);
         next();
 
@@ -26,3 +27,5 @@ const authMiddleware = async (req, res, next) => {
         })
     }
 }
+
+export default authMiddleware;
