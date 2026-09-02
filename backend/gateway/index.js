@@ -5,6 +5,7 @@ import proxy from "express-http-proxy";
 import cors from "cors"
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.routes.js"
+import { proxyWithHeader } from "./config/proxyWithHeader.js";
 const app = express();
 
 app.use(express.json());
@@ -24,6 +25,10 @@ app.use(
         },
     })
 );
+
+app.use("/api/v1/chat",
+    proxyWithHeader(process.env.CHAT_SERVICE)
+)
 
 app.get("/", (req, res) => {
     return res.status(200).json({
