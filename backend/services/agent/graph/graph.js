@@ -19,4 +19,38 @@ workFlow.Node("ppt", pptGenAgent)
 workFlow.Node("image", imageGenAgent)
 
 workFlow.addEdge("__start__", "router")
-workFlow.addConditionalEdges("router",)
+workFlow.addConditionalEdges("router", (state) => {
+    switch (state.agent) {
+        case "chat":
+            return "chat";
+        case "search":
+            return "search";
+        case "coding":
+            return "coding";
+        case "pdf":
+            return "pdf"
+        case "ppt":
+            return "ppt"
+        case "image":
+            return "image"
+        default:
+            return "chat"
+    }
+}, {
+    chat: "chat",
+    search: "search",
+    coding: "coding",
+    pdf: "pdf",
+    ppt: "ppt",
+    image: "image",
+
+})
+
+workFlow.addEdge("search", "chat")
+workFlow.addEdge("chat", "__end__")
+workFlow.addEdge("coding", "__end__")
+workFlow.addEdge("pdf", "__end__")
+workFlow.addEdge("ppt", "__end__")
+workFlow.addEdge("image", "__end__")
+
+export const graph = workFlow.compile();
