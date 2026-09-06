@@ -12,12 +12,12 @@ const gemini = new ChatGoogleGenerativeAI({
 });
 
 
-const getAgent = async (agent) => {
+export const getAgent = (agent) => {
     switch (agent) {
         case "chat":
-            return "groq"
+            return groq
         case "search":
-            return "gemini"
+            return gemini
 
         default:
             "groq"
