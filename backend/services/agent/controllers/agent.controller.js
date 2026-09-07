@@ -3,6 +3,11 @@ import graph from "../graph/graph.js";
 export const agentApi = async (req, res) => {
     try {
         const { conversationId, prompt } = req.body;
+        let currentConversationId = conversationId;
+
+        if (!currentConversationId) {
+
+        }
         await axios.post(`${process.env.CHAT_SERVICE_URL}/m`, {
             conversationId, role: "user", content: prompt
         });

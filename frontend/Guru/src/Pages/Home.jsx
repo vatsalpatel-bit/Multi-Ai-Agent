@@ -1,9 +1,23 @@
 import { useState } from "react";
 import Navbar from "../Layouts/Navbar.jsx";
 import Sidebar from "../Layouts/Sidebar.jsx";
+import { agentApi } from "../Services/chatApi.js";
 
 const Home = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [message, setMessage] = useState({
+        conversationId: null,
+        prompt: ""
+    });
+
+    const submitHandler = async () => {
+        try {
+            const res = await agentApi(message);
+            console.log(res)
+        } catch (error) {
+            console.log("Faild to send message")
+        }
+    }
 
     return (
         <div className="min-h-screen overflow-x-hidden bg-[#11120D] text-[#FFFBF4]">
@@ -58,6 +72,12 @@ const Home = () => {
                     <div className="mx-auto flex w-full max-w-[720px] items-end gap-2 rounded-[22px] bg-[#FFFBF4] p-2 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
 
                         <textarea
+                            value={message.prompt}
+                            onChange={(e) => setMessage((prev) => ({
+                                ...prev,
+                                prompt: e.target.value
+                            }))}
+
                             rows="1"
                             placeholder="Ask your AI agent anything..."
                             className="
@@ -75,6 +95,7 @@ const Home = () => {
                         />
 
                         <button
+                            onClick={submitHandler}
                             className="
                                 h-12
                                 w-12

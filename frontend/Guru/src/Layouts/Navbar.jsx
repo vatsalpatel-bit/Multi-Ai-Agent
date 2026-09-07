@@ -9,7 +9,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="flex h-[82px] items-center justify-between border-b border-[#D8CFBC]/10 px-[5%]">
+      <nav className="flex h-[82px] items-center justify-between  border-[#D8CFBC]/10 px-[5%]">
 
         {/* Logo */}
         <div className="text-[21px] font-medium text-[#FFFBF4]">

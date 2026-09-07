@@ -28,10 +28,17 @@ app.use(
     })
 );
 
-app.use("/api/v1/chat",
+app.use(
+    "/api/v1/chat",
     authMiddleware,
     proxyWithHeader(process.env.CHAT_SERVICE)
-)
+);
+
+app.use(
+    "/api/v1/agent",
+    proxyWithHeader(process.env.AGENT_SERVICE)
+);
+
 
 app.use("/api/v1/user", userRouter);
 
