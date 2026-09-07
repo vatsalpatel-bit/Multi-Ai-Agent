@@ -1,11 +1,10 @@
 import { useState } from "react";
-import Sidebar from "./Sidebar";
-import LoginPopup from "./LoginPopup";
+import LoginPopup from "./LoginPopup.jsx";
 import { useSelector } from "react-redux";
 
 const Navbar = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+
   const user = useSelector((state) => state.user.user);
 
   return (
@@ -21,30 +20,27 @@ const Navbar = () => {
         </div>
 
         {/* Login */}
-        {!user && (<button
-          onClick={() => setShowLogin(true)}
-          className="
-            rounded-full
-            border border-[#D8CFBC]/35
-            px-[22px] py-[10px]
-            text-sm
-            text-[#FFFBF4]
-            transition
-            hover:bg-[#D8CFBC]
-            hover:text-[#11120D]
-          "
-        >
-          Login
-        </button>)}
+        {!user && (
+          <button
+            onClick={() => setShowLogin(true)}
+            className="
+              rounded-full
+              border border-[#D8CFBC]/35
+              px-[22px] py-[10px]
+              text-sm
+              text-[#FFFBF4]
+              transition
+              hover:bg-[#D8CFBC]
+              hover:text-[#11120D]
+            "
+          >
+            Login
+          </button>
+        )}
 
       </nav>
 
-      <Sidebar
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-        onOpen={() => setIsSidebarOpen(true)}
-      />
-
+      {/* Login Popup */}
       {showLogin && (
         <LoginPopup
           onClose={() => setShowLogin(false)}

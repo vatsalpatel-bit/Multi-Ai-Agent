@@ -4,16 +4,19 @@ import { clearUser } from "../redux/slices/userSlice.js";
 
 const Sidebar = ({ isOpen, onClose, onOpen }) => {
   const dispatch = useDispatch();
+
   const logoutHandle = async () => {
     try {
       await logoutApi();
-      dispatch(clearUser())
+
+      dispatch(clearUser());
+
       onClose();
     } catch (error) {
       console.error("Logout failed:", error);
     }
+  };
 
-  }
   return (
     <>
       {/* Open Sidebar Button */}
@@ -40,27 +43,27 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
         </button>
       )}
 
-      {/* Overlay */}
-      {isOpen && (
-        <div
-          onClick={onClose}
-          className="fixed inset-0 z-40 bg-[#11120D]/60 backdrop-blur-sm"
-        />
-      )}
-
       {/* Sidebar */}
       <aside
         className={`
-          fixed left-0 top-0 z-50
-          h-screen w-[320px]
-          border-r border-[#D8CFBC]/10
+          fixed
+          left-0
+          top-0
+          z-50
+          h-screen
+          w-[320px]
+          border-r
+          border-[#D8CFBC]/10
           bg-[#11120D]
-          px-6 py-6
-          transition-transform duration-300 ease-in-out
+          px-6
+          py-6
+          transition-transform
+          duration-300
+          ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
         `}
       >
-        {/* Sidebar Header */}
+        {/* Header */}
         <div className="flex items-center justify-between">
 
           <div className="text-[21px] font-medium text-[#FFFBF4]">
@@ -100,7 +103,8 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
             items-center
             gap-3
             rounded-xl
-            border border-[#D8CFBC]/15
+            border
+            border-[#D8CFBC]/15
             bg-[#565449]/20
             px-4
             py-3
@@ -123,15 +127,15 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
 
           <div className="space-y-1">
 
-            <button className="w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#D8CFBC]/70 hover:bg-[#565449]/25 hover:text-[#FFFBF4]">
+            <button className="w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#D8CFBC]/70 transition hover:bg-[#565449]/25 hover:text-[#FFFBF4]">
               React question
             </button>
 
-            <button className="w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#D8CFBC]/70 hover:bg-[#565449]/25 hover:text-[#FFFBF4]">
+            <button className="w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#D8CFBC]/70 transition hover:bg-[#565449]/25 hover:text-[#FFFBF4]">
               Node.js project
             </button>
 
-            <button className="w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#D8CFBC]/70 hover:bg-[#565449]/25 hover:text-[#FFFBF4]">
+            <button className="w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#D8CFBC]/70 transition hover:bg-[#565449]/25 hover:text-[#FFFBF4]">
               AI agent
             </button>
 
@@ -141,13 +145,25 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
         {/* Bottom */}
         <div className="absolute bottom-6 left-6 right-6 space-y-1">
 
-          <button className="w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#D8CFBC]/70 hover:bg-[#565449]/25 hover:text-[#FFFBF4]">
+          <button className="w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#D8CFBC]/70 transition hover:bg-[#565449]/25 hover:text-[#FFFBF4]">
             Settings
           </button>
 
           <button
             onClick={logoutHandle}
-            className="w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#D8CFBC]/70 hover:bg-[#565449]/25 hover:text-[#FFFBF4]">
+            className="
+              w-full
+              rounded-lg
+              px-3
+              py-2.5
+              text-left
+              text-sm
+              text-[#D8CFBC]/70
+              transition
+              hover:bg-[#565449]/25
+              hover:text-[#FFFBF4]
+            "
+          >
             Logout
           </button>
 

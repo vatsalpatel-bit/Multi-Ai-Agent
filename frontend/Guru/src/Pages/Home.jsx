@@ -1,12 +1,40 @@
-import Navbar from "../Layouts/Navbar.jsx"
+import { useState } from "react";
+import Navbar from "../Layouts/Navbar.jsx";
+import Sidebar from "../Layouts/Sidebar.jsx";
 
 const Home = () => {
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
     return (
-        <div className="min-h-screen bg-[#11120D] text-[#FFFBF4]">
+        <div className="min-h-screen overflow-x-hidden bg-[#11120D] text-[#FFFBF4]">
+
+            {/* Navbar */}
             <Navbar />
 
+            {/* Sidebar */}
+            <Sidebar
+                isOpen={isSidebarOpen}
+                onClose={() => setIsSidebarOpen(false)}
+                onOpen={() => setIsSidebarOpen(true)}
+            />
+
             {/* Home */}
-            <main className="min-h-[calc(100vh-82px)] flex items-center justify-center px-5">
+            <main
+                className={`
+    min-h-[calc(100vh-82px)]
+    flex
+    items-center
+    justify-center
+    px-5
+    transition-all
+    duration-300
+    ease-in-out
+    ${isSidebarOpen
+                        ? "ml-[320px] w-[calc(100%-320px)]"
+                        : "ml-0 w-full"
+                    }
+  `}
+            >
                 <div className="w-full max-w-[850px] text-center">
 
                     <p className="mb-[22px] text-[11px] font-semibold tracking-[3px] text-[#D8CFBC]">
@@ -16,7 +44,9 @@ const Home = () => {
                     <h1 className="font-serif text-5xl font-medium leading-[1.03] tracking-[-3px] sm:text-7xl">
                         Think smarter.
                         <br />
-                        <span className="text-[#D8CFBC]">Build faster.</span>
+                        <span className="text-[#D8CFBC]">
+                            Build faster.
+                        </span>
                     </h1>
 
                     <p className="mx-auto mt-[25px] mb-[42px] max-w-[560px] text-base leading-[1.7] text-[#D8CFBC]/70">
@@ -31,32 +61,33 @@ const Home = () => {
                             rows="1"
                             placeholder="Ask your AI agent anything..."
                             className="
-                min-h-[52px]
-                flex-1
-                resize-none
-                bg-transparent
-                px-[15px]
-                py-4
-                text-[15px]
-                text-[#11120D]
-                outline-none
-                placeholder:text-[#777467]
-              "
+                                min-h-[52px]
+                                flex-1
+                                resize-none
+                                bg-transparent
+                                px-[15px]
+                                py-4
+                                text-[15px]
+                                text-[#11120D]
+                                outline-none
+                                placeholder:text-[#777467]
+                            "
                         />
 
                         <button
                             className="
-                h-12
-                w-12
-                shrink-0
-                rounded-[15px]
-                bg-[#11120D]
-                text-[23px]
-                text-[#FFFBF4]
-                transition-all duration-300
-                hover:bg-[#565449]
-                hover:-translate-y-0.5
-              "
+                                h-12
+                                w-12
+                                shrink-0
+                                rounded-[15px]
+                                bg-[#11120D]
+                                text-[23px]
+                                text-[#FFFBF4]
+                                transition-all
+                                duration-300
+                                hover:bg-[#565449]
+                                hover:-translate-y-0.5
+                            "
                         >
                             →
                         </button>
@@ -65,6 +96,7 @@ const Home = () => {
 
                     {/* Suggestions */}
                     <div className="mt-[18px] flex flex-wrap justify-center gap-2">
+
                         <button className="rounded-full border border-[#D8CFBC]/20 bg-[#565449]/25 px-3.5 py-2 text-xs text-[#D8CFBC] transition hover:bg-[#565449] hover:text-[#FFFBF4]">
                             Explain something
                         </button>
@@ -76,12 +108,13 @@ const Home = () => {
                         <button className="rounded-full border border-[#D8CFBC]/20 bg-[#565449]/25 px-3.5 py-2 text-xs text-[#D8CFBC] transition hover:bg-[#565449] hover:text-[#FFFBF4]">
                             Analyze data
                         </button>
+
                     </div>
 
                 </div>
             </main>
         </div>
-    )
-}
+    );
+};
 
-export default Home
+export default Home;

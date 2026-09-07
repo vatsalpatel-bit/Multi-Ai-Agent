@@ -10,13 +10,13 @@ import { imageGenAgent } from "../agent/imageGen.agent.js";
 
 const workFlow = new StateGraph(agentState)
 
-workFlow.Node("router", router)
-workFlow.Node("chat", chatAgent)
-workFlow.Node("search", searchAgent)
-workFlow.Node("coding", codingAgent)
-workFlow.Node("pdf", pdfGenAgent)
-workFlow.Node("ppt", pptGenAgent)
-workFlow.Node("image", imageGenAgent)
+workFlow.addNode("router", router)
+workFlow.addNode("chat", chatAgent)
+workFlow.addNode("search", searchAgent)
+workFlow.addNode("coding", codingAgent)
+workFlow.addNode("pdf", pdfGenAgent)
+workFlow.addNode("ppt", pptGenAgent)
+workFlow.addNode("image", imageGenAgent)
 
 workFlow.addEdge("__start__", "router")
 workFlow.addConditionalEdges("router", (state) => {
@@ -53,4 +53,6 @@ workFlow.addEdge("pdf", "__end__")
 workFlow.addEdge("ppt", "__end__")
 workFlow.addEdge("image", "__end__")
 
-export const graph = workFlow.compile();
+const graph = workFlow.compile();
+
+export default graph;
