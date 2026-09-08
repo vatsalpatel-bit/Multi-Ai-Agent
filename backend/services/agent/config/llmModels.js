@@ -5,7 +5,7 @@ import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 
 const groq = new ChatGroq({
     apiKey: process.env.GROQ_API_KEY,
-    model: "llama-3.3-70b-versatile",
+    model: "openai/gpt-oss-120b",
 });
 
 const gemini = new ChatGoogleGenerativeAI({
@@ -22,6 +22,6 @@ export const getAgent = (agent) => {
             return gemini
 
         default:
-            "groq"
+            return groq
     }
 }

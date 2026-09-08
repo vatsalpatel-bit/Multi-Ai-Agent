@@ -16,7 +16,7 @@ workFlow.addNode("search", searchAgent)
 workFlow.addNode("coding", codingAgent)
 workFlow.addNode("pdf", pdfGenAgent)
 workFlow.addNode("ppt", pptGenAgent)
-workFlow.addNode("image", imageGenAgent)
+workFlow.addNode("imageGen", imageGenAgent)
 
 workFlow.addEdge("__start__", "router")
 workFlow.addConditionalEdges("router", (state) => {
@@ -31,8 +31,8 @@ workFlow.addConditionalEdges("router", (state) => {
             return "pdf"
         case "ppt":
             return "ppt"
-        case "image":
-            return "image"
+        case "imageGen":
+            return "imageGen"
         default:
             return "chat"
     }
@@ -42,7 +42,7 @@ workFlow.addConditionalEdges("router", (state) => {
     coding: "coding",
     pdf: "pdf",
     ppt: "ppt",
-    image: "image",
+    imageGen: "imageGen",
 
 })
 
@@ -51,8 +51,7 @@ workFlow.addEdge("chat", "__end__")
 workFlow.addEdge("coding", "__end__")
 workFlow.addEdge("pdf", "__end__")
 workFlow.addEdge("ppt", "__end__")
-workFlow.addEdge("image", "__end__")
+workFlow.addEdge("imageGen", "__end__")
 
-const graph = workFlow.compile();
+export const graph = workFlow.compile();
 
-export default graph;

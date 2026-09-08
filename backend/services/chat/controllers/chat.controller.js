@@ -65,15 +65,21 @@ export const saveMessageApi = async (req, res) => {
         const { conversationId, role, content } = req.body;
         const userId = req.headers["x-user-id"];
         const type = req.headers["x-user-type"];
+
+
         const message = await Message.create({
             conversationId, role, content, userId, type
         });
-        return res.staus(200).json(message);
+        return res.status(200).json(message);
     } catch (error) {
+        console.log("Agent API error:", error.message);
+        console.log("Response:", error.response?.data);
+        console.log("Status:", error.response?.status);
+
         return res.status(500).json({
             success: false,
             message: "Server error"
-        })
+        });
     }
 };
 

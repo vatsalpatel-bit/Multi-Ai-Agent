@@ -1,30 +1,33 @@
-import graph from "../graph/graph.js";
+import { graph } from "../graph/graph.js";
 import axios from "axios";
 import crypto from "crypto"
 
 export const agentApi = async (req, res) => {
     try {
-        console.log("Agent start");
-        
+
         const { conversationId, prompt } = req.body;
         let currentConversationId = conversationId;
 
-        const userId = req.headers["x-user-id"];
-        const type = req.headers["x-user-type"];
+        req.headers["x-user-id"];
+        req.headers["x-user-type"];
 
         if (!currentConversationId) {
             currentConversationId = crypto.randomUUID();
         }
-        await axios.post(`${process.env.CHAT_SERVICE_URL}/m`, {
+
+        await axios.post(`${process.env.CHAT_SERVICE_URL}/api/v1/chat/m`, {
             conversationId: currentConversationId,
             role: "user",
             content: prompt,
-            userId,
-            type,
+        }, {
+            headers: {
+                "x-user-id": req.headers["x-user-id"],
+                "x-user-type": req.headers["x-user-type"]
+            }
         });
 
         const result = await graph.invoke({
-            conversationId,
+            conversationId: currentConversationId,
             prompt
         });
 
@@ -36,10 +39,11 @@ export const agentApi = async (req, res) => {
         });
 
     } catch (error) {
-        console.log(`agent api error:${error}`);
+        console.error("AGENT API ERROR");
+        console.log(error)
         return res.status(500).json({
             success: false,
-            message: "Server error",
-        })
+            message: "Server error"
+        });
     }
 }

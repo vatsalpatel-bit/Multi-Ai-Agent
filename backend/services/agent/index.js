@@ -8,7 +8,7 @@ const app = express();
 
 app.use(express.json());
 
-app.use("/api/v1/chat", agentRouter)
+app.use("/api/v1/agent", agentRouter)
 
 const PORT = process.env.PORT;
 
