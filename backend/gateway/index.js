@@ -6,7 +6,7 @@ import cors from "cors"
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.routes.js"
 import { proxyWithHeader } from "./config/proxyWithHeader.js";
-import authMiddleware from "./middleware/auth.middleware.js";
+import guestOrAuthMiddleware from "./middleware/guestOrAuth.middleware.js";
 
 const app = express();
 
@@ -30,12 +30,13 @@ app.use(
 
 app.use(
     "/api/v1/chat",
-    authMiddleware,
+    guestOrAuthMiddleware,
     proxyWithHeader(process.env.CHAT_SERVICE)
 );
 
 app.use(
     "/api/v1/agent",
+    guestOrAuthMiddleware,
     proxyWithHeader(process.env.AGENT_SERVICE)
 );
 

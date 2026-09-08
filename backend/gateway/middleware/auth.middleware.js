@@ -9,11 +9,12 @@ const authMiddleware = async (req, res, next) => {
                 message: "Unauthorized"
             });
         };
+        
         const session = await redis.get(`session:${sessionId}`);
         if (!session) {
             return res.status(401).json({
-                success: false,
-                message: "Unathorized"
+                    success: false,
+                    message: "Unathorized"
             });
         };
 

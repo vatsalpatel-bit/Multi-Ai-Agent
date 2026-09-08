@@ -5,6 +5,13 @@ const messageSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Conversation"
     },
+    userId: {
+        type: String,
+    },
+    type: {
+        type: String,
+        enum: ['user', 'guest']
+    },
     role: {
         type: String,
         enum: ['user', 'assistant']

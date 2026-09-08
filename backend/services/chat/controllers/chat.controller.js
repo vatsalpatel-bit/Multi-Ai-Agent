@@ -4,6 +4,7 @@ import Message from "../models/message.model.js";
 export const saveConversationApi = async (req, res) => {
     try {
         const userId = req.headers["x-user-id"];
+
         console.log(userId);
         const conversation = await Conversation.create({
             userId,
@@ -60,9 +61,12 @@ export const updateConversationApi = async (req, res) => {
 
 export const saveMessageApi = async (req, res) => {
     try {
+
         const { conversationId, role, content } = req.body;
+        const userId = req.headers["x-user-id"];
+        const type = req.headers["x-user-type"];
         const message = await Message.create({
-            conversationId, role, content
+            conversationId, role, content, userId, type
         });
         return res.staus(200).json(message);
     } catch (error) {
@@ -75,9 +79,12 @@ export const saveMessageApi = async (req, res) => {
 
 export const getMessagesApi = async (req, res) => {
     try {
+        const userId = req.headers["x-user-id"];
         const messages = await Message.find({
+            userId,
             conversationId: req.params.conversationId
-        }).sort({ createdAt: 1 })
+        }).sort({ createdAt: 1 });
+
         if (messages.length == 0) {
             return res.status(404).json({
                 success: false,

@@ -5,7 +5,7 @@ import redis from "../../../shared/redis/redis.js";
 
 export const loginApi = async (req, res) => {
     try {
-        const { token } = req.body;
+    const { token } = req.body;
         if (!token) {
             return res.status(400).json({
                 success: false,
