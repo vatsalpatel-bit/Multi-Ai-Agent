@@ -25,13 +25,7 @@ export const getConversationsApi = async (req, res) => {
         const conversations = await Conversation.find({
             userId,
         }).sort({ createdAt: -1 });
-        if (conversations.length == 0) {
-            return res.status(404).json({
-                success: false,
-                message: "Conversation not found"
-            });
-        };
-        return res.staus(200).json(conversations);
+        return res.status(200).json(conversations);
     } catch (error) {
         return res.status(500).json({
             success: false,

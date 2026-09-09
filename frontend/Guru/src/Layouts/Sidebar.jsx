@@ -1,6 +1,8 @@
 import { useDispatch } from "react-redux";
 import { logoutApi } from "../Services/authApi.js";
 import { clearUser } from "../redux/slices/userSlice.js";
+import { useEffect } from "react";
+import { getConversationApi } from "../Services/chatApi.js";
 
 const Sidebar = ({ isOpen, onClose, onOpen }) => {
   const dispatch = useDispatch();
@@ -16,6 +18,14 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
       console.error("Logout failed:", error);
     }
   };
+
+  useEffect(() => {
+    const fetchGetConversationApi = async () => {
+      const res = await getConversationApi();
+      console.log(res)
+    }
+    fetchGetConversationApi();
+  }, [])
 
   return (
     <>

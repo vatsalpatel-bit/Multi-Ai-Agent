@@ -18,13 +18,13 @@ const Chat = () => {
 
 
     const messages = useSelector((state) => state.chat.allMessages);
-    console.log(messages)
+    // console.log(messages)
 
     useEffect(() => {
         const fetchGetMessagesApi = async () => {
             try {
                 const res = await getMessageAPi(conversationId);
-                console.log(res)
+                // console.log(res)
                 dispatch(setAllMessages(res));
             } catch {
                 console.log("Faild to get message api ")
@@ -44,14 +44,14 @@ const Chat = () => {
             }));
 
             setPrompt("");
-            console.log(conversationId)
-            console.log(currentPrompt)
+            // console.log(conversationId)
+            // console.log(currentPrompt)
 
             const res = await agentApi({
                 conversationId,
                 prompt: currentPrompt
             });
-            console.log(res)
+            // console.log(res)
             dispatch(addMessage({
                 _id: crypto.randomUUID(),
                 role: 'assistant',
