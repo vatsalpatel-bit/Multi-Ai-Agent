@@ -72,10 +72,7 @@ export const saveMessageApi = async (req, res) => {
         });
         return res.status(200).json(message);
     } catch (error) {
-        console.log("Agent API error:", error.message);
-        console.log("Response:", error.response?.data);
-        console.log("Status:", error.response?.status);
-
+        console.log(error)
         return res.status(500).json({
             success: false,
             message: "Server error"
@@ -85,10 +82,11 @@ export const saveMessageApi = async (req, res) => {
 
 export const getMessagesApi = async (req, res) => {
     try {
+        const conversationId = req.params?.conversationId;
         const userId = req.headers["x-user-id"];
         const messages = await Message.find({
             userId,
-            conversationId: req.params.conversationId
+            conversationId,
         }).sort({ createdAt: 1 });
 
         if (messages.length == 0) {
@@ -99,6 +97,7 @@ export const getMessagesApi = async (req, res) => {
         }
         return res.status(200).json(messages)
     } catch (error) {
+        console.log(error)
         return res.status(500).json({
             success: false,
             message: "Server error"

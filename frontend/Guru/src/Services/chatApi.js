@@ -1,14 +1,11 @@
-import api from "./axios.js"
+import api from "./axios.js";
 
-export const agentApi = async (message) => {
+export const getMessageAPi = async (conversationId) => {
     try {
-        const res = await api.post("/api/v1/agent/chat", {
-            conversationId: message.conversationId,
-            prompt: message.prompt,
-        });
+        const res = await api.get(`/api/v1/chat/get/m/${conversationId}`);
         return res.data;
     } catch (error) {
-        console.log("API agent error:", error);
+        console.log(`Api chat error`)
         throw error;
     }
 }

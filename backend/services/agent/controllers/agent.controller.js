@@ -33,8 +33,18 @@ export const agentApi = async (req, res) => {
 
         const response = result.aiResponse;
 
+        await axios.post(`${process.env.CHAT_SERVICE_URL}/api/v1/chat/m`, {
+            conversationId: currentConversationId,
+            role: "assistant",
+            content: response,
+        }, {
+            headers: {
+                "x-user-id": req.headers["x-user-id"],
+                "x-user-type": req.headers["x-user-type"]
+            }
+        });
         return res.status(200).json({
-            success: true,
+            conversationId:currentConversationId,
             response,
         });
 

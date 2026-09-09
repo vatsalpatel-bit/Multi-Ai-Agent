@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "./Navbar.jsx";
 import Sidebar from "./Sidebar.jsx";
 import Message from "./Message.jsx";
 
 const Chat = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    useEffect(() => {
+
+    })
 
     const messages = [
         {
