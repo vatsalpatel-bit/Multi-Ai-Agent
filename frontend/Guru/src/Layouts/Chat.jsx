@@ -2,38 +2,66 @@ import { useEffect, useState } from "react";
 import Navbar from "./Navbar.jsx";
 import Sidebar from "./Sidebar.jsx";
 import Message from "./Message.jsx";
+import { getMessageAPi } from "../Services/chatApi.js";
+import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { addMessage, setAllMessages } from "../redux/slices/chatSlice.js";
+import { agentApi } from "../Services/agentApi.js";
 
 const Chat = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+    const [prompt, setPrompt] = useState("")
+
+    const { id: conversationId } = useParams();
+    const dispatch = useDispatch();
+
+
+    const messages = useSelector((state) => state.chat.allMessages);
+    console.log(messages)
+
     useEffect(() => {
-
-    })
-
-    const messages = [
-        {
-            id: 1,
-            role: "user",
-            content: "Explain how React state works."
-        },
-        {
-            id: 2,
-            role: "assistant",
-            content:
-                "React state is data that belongs to a component and can change over time. When the state changes, React re-renders the component and updates the UI with the latest state."
-        },
-        {
-            id: 3,
-            role: "user",
-            content: "Can you give me a simple example?"
-        },
-        {
-            id: 4,
-            role: "assistant",
-            content:
-                "Sure. A simple example is a counter. You can use React's useState hook to store the current count and update it whenever the user clicks a button."
+        const fetchGetMessagesApi = async () => {
+            try {
+                const res = await getMessageAPi(conversationId);
+                console.log(res)
+                dispatch(setAllMessages(res));
+            } catch {
+                console.log("Faild to get message api ")
+            }
         }
-    ];
+        fetchGetMessagesApi();
+    }, [conversationId, dispatch])
+
+    const submitHandler = async () => {
+        if (!prompt.trim()) return;
+        const currentPrompt = prompt;
+        try {
+            dispatch(addMessage({
+                _id: crypto.randomUUID(),
+                role: 'user',
+                content: currentPrompt,
+            }));
+
+            setPrompt("");
+            console.log(conversationId)
+            console.log(currentPrompt)
+
+            const res = await agentApi({
+                conversationId,
+                prompt: currentPrompt
+            });
+            console.log(res)
+            dispatch(addMessage({
+                _id: crypto.randomUUID(),
+                role: 'assistant',
+                content: res.response
+            }))
+        } catch {
+            console.log("Faild to send message")
+        }
+    }
+
 
     return (
         <div className="min-h-screen overflow-hidden bg-[#11120D] text-[#FFFBF4]">
@@ -52,9 +80,9 @@ const Chat = () => {
 
                     <div className="mx-auto flex w-full max-w-[780px] flex-col gap-8 py-10">
 
-                        {messages.map((message) => (
+                        {messages?.map((message) => (
                             <Message
-                                key={message.id}
+                                key={message._id}
                                 role={message.role}
                                 content={message.content}
                             />
@@ -98,6 +126,8 @@ const Chat = () => {
 
                             {/* Input */}
                             <textarea
+                                value={prompt}
+                                onChange={(e) => setPrompt(e.target.value)}
                                 rows="1"
                                 placeholder="Message AI Agent..."
                                 className="
@@ -117,6 +147,7 @@ const Chat = () => {
 
                             {/* Send */}
                             <button
+                                onClick={submitHandler}
                                 className="
                                     mb-1
                                     flex h-10 w-10 shrink-0

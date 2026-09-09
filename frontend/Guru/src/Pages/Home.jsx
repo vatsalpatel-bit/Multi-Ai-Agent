@@ -14,10 +14,13 @@ const Home = () => {
 
     const submitHandler = async () => {
         try {
-            const res = await agentApi(message);
+            const res = await agentApi({
+                conversationId: message.conversationId,
+                prompt: message.prompt
+            });
             console.log(res)
             navigate(`/chat/${res.conversationId}`);
-        } catch (error) {
+        } catch {
             console.log("Faild to send message")
         }
     }

@@ -1,10 +1,10 @@
 import api from "./axios.js"
 
-export const agentApi = async (message) => {
+export const agentApi = async ({ conversationId, prompt }) => {
     try {
         const res = await api.post("/api/v1/agent/chat", {
-            conversationId: message.conversationId,
-            prompt: message.prompt,
+            conversationId,
+            prompt
         });
         return res.data;
     } catch (error) {

@@ -8,7 +8,7 @@ const Router = createBrowserRouter([
         element: (<Home />),
     },
     {
-        path: "/chat/:conversationId",
+        path: "/chat/:id",
         element: (<Chat />)
     }
 ]);

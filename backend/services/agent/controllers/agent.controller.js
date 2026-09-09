@@ -4,10 +4,11 @@ import crypto from "crypto"
 
 export const agentApi = async (req, res) => {
     try {
-
+        console.log("start")
         const { conversationId, prompt } = req.body;
-        let currentConversationId = conversationId;
 
+        let currentConversationId = conversationId;
+        console.log(currentConversationId)
         req.headers["x-user-id"];
         req.headers["x-user-type"];
 
@@ -44,7 +45,7 @@ export const agentApi = async (req, res) => {
             }
         });
         return res.status(200).json({
-            conversationId:currentConversationId,
+            conversationId: currentConversationId,
             response,
         });
 
