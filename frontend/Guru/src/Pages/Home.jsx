@@ -2,8 +2,10 @@ import { useState } from "react";
 import Navbar from "../Layouts/Navbar.jsx";
 import Sidebar from "../Layouts/Sidebar.jsx";
 import { agentApi } from "../Services/chatApi.js";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+    const navigate = useNavigate();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [message, setMessage] = useState({
         conversationId: null,
@@ -14,6 +16,7 @@ const Home = () => {
         try {
             const res = await agentApi(message);
             console.log(res)
+            navigate("/chat");
         } catch (error) {
             console.log("Faild to send message")
         }
