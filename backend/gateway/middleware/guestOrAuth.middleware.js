@@ -3,9 +3,8 @@ import redis from "../../shared/redis/redis.js";
 
 const guestOrAuthMiddleware = async (req, res, next) => {
     try {
-        console.log("start")
         // Check authenticated user
-        console.log("start")
+
         const sessionId = req.cookies?.session;
         if (sessionId) {
 

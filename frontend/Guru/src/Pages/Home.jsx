@@ -13,6 +13,8 @@ const Home = () => {
     });
 
     const submitHandler = async () => {
+        if (!message.prompt.trim()) return;
+
         try {
             const res = await agentApi({
                 conversationId: message.conversationId,

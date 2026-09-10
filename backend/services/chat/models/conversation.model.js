@@ -7,6 +7,14 @@ const conversationSchema = mongoose.Schema({
     },
     userId: {
         type: String,
+        required: true,
+        index: true
+    },
+
+    userType: {
+        type: String,
+        enum: ["user", "guest"],
+        required: true
     }
 }, {
     timestamps: true,

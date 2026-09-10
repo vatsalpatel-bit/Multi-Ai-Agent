@@ -1,24 +1,29 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const messageSchema = mongoose.Schema({
-    conversationId: {
-        type: String,
+const messageSchema = new mongoose.Schema(
+    {
+        conversationId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Conversation",
+            required: true,
+            index: true
+        },
+
+        role: {
+            type: String,
+            required: true,
+            enum: ["user", "assistant"]
+        },
+
+        content: {
+            type: String,
+            required: true
+        }
     },
-    userId: {
-        type: String,
-    },
-    type: {
-        type: String,
-        enum: ['user', 'guest']
-    },
-    role: {
-        type: String,
-        enum: ['user', 'assistant']
-    },
-    content: String,
-}, {
-    timestamps: true
-});
+    {
+        timestamps: true
+    }
+);
 
 const Message = mongoose.model("Message", messageSchema);
 

@@ -4,27 +4,43 @@ import Message from "../models/message.model.js";
 export const saveConversationApi = async (req, res) => {
     try {
         const userId = req.headers["x-user-id"];
+        const userType = req.headers["x-user-type"];
 
-        console.log(userId);
+        if (!userId || !userType) {
+            return res.status(401).json({
+                success: false,
+                message: "User identity is required"
+            });
+        }
+
         const conversation = await Conversation.create({
             userId,
+            userType
         });
-        return res.status(200).json(conversation)
+
+        const conversationId = conversation._id
+        console.log(conversationId)
+        return res.status(201).json(conversationId);
+
     } catch (error) {
-        console.log(error);
+        console.error("SAVE CONVERSATION ERROR:", error);
+
         return res.status(500).json({
             success: false,
             message: "Server error"
-        })
+        });
     }
 };
 
 export const getConversationsApi = async (req, res) => {
     try {
+        // console.log("Start")
         const userId = req.headers["x-user-id"]
+        // console.log(userId)
         const conversations = await Conversation.find({
-            userId,
+            _id: userId,
         }).sort({ createdAt: -1 });
+        // console.log(conversations)
         return res.status(200).json(conversations);
     } catch (error) {
         return res.status(500).json({
@@ -57,14 +73,13 @@ export const saveMessageApi = async (req, res) => {
     try {
 
         const { conversationId, role, content } = req.body;
-        const userId = req.headers["x-user-id"];
-        const type = req.headers["x-user-type"];
-
-
+        console.log(conversationId, role, content)
         const message = await Message.create({
-            conversationId, role, content, userId, type
+            conversationId, role, content,
         });
+
         return res.status(200).json(message);
+
     } catch (error) {
         console.log(error)
         return res.status(500).json({
@@ -77,9 +92,8 @@ export const saveMessageApi = async (req, res) => {
 export const getMessagesApi = async (req, res) => {
     try {
         const conversationId = req.params?.conversationId;
-        const userId = req.headers["x-user-id"];
+
         const messages = await Message.find({
-            userId,
             conversationId,
         }).sort({ createdAt: 1 });
 
