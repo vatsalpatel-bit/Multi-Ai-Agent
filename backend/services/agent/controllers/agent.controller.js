@@ -29,7 +29,8 @@ export const agentApi = async (req, res) => {
                 }
             );
 
-            currentConversationId = conversationRes.data;
+            currentConversationId = conversationRes.data._id;
+
         }
 
         // Save user message

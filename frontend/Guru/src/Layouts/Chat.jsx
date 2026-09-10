@@ -23,6 +23,7 @@ const Chat = () => {
     useEffect(() => {
         const fetchGetMessagesApi = async () => {
             try {
+                console.log(conversationId)
                 const res = await getMessageAPi(conversationId);
                 // console.log(res)
                 dispatch(setAllMessages(res));

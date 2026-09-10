@@ -1,11 +1,16 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logoutApi } from "../Services/authApi.js";
 import { clearUser } from "../redux/slices/userSlice.js";
 import { useEffect } from "react";
-import { getConversationApi } from "../Services/chatApi.js";
+import { conversationApi, getConversationApi } from "../Services/chatApi.js";
+import { addConversation, setAllConversations } from "../redux/slices/chatSlice.js";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({ isOpen, onClose, onOpen }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const convsersations = useSelector((state) => state.chat.allConversations)
+  // console.log(convsersations)
 
   const logoutHandle = async () => {
     try {
@@ -22,10 +27,21 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
   useEffect(() => {
     const fetchGetConversationApi = async () => {
       const res = await getConversationApi();
-      console.log(res)
+      dispatch(setAllConversations(res.conversations))
     }
     fetchGetConversationApi();
-  }, [])
+  }, [dispatch]);
+
+  const handleConversation = async () => {
+    try {
+      const res = await conversationApi();
+      console.log(res);
+      dispatch(addConversation(res))
+      navigate(`/chat/${res._id}`);
+    } catch (error) {
+      console.log("Conversation create request faild")
+    }
+  }
 
   return (
     <>
@@ -106,6 +122,7 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
 
         {/* New Chat */}
         <button
+          onClick={handleConversation}
           className="
             mt-10
             flex
@@ -134,31 +151,30 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
           <p className="mb-3 px-2 text-[11px] font-semibold uppercase tracking-[2px] text-[#D8CFBC]/40">
             Recent Chats
           </p>
+          {
+            convsersations.map((conversation) => (
+              <div
+                key={conversation._id}
+                className="space-y-1">
 
-          <div className="space-y-1">
+                <button
+                  onClick={() => navigate(`/chat/${conversation._id}`)}
+                  className="w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#D8CFBC]/70 transition hover:bg-[#565449]/25 hover:text-[#FFFBF4]">
+                  {conversation.title}
+                </button>
 
-            <button className="w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#D8CFBC]/70 transition hover:bg-[#565449]/25 hover:text-[#FFFBF4]">
-              React question
-            </button>
 
-            <button className="w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#D8CFBC]/70 transition hover:bg-[#565449]/25 hover:text-[#FFFBF4]">
-              Node.js project
-            </button>
+              </div>
+            ))
+          }
 
-            <button className="w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#D8CFBC]/70 transition hover:bg-[#565449]/25 hover:text-[#FFFBF4]">
-              AI agent
-            </button>
-
-          </div>
         </div>
 
         {/* Bottom */}
         <div className="absolute bottom-6 left-6 right-6 space-y-1">
 
-          <button className="w-full rounded-lg px-3 py-2.5 text-left text-sm text-[#D8CFBC]/70 transition hover:bg-[#565449]/25 hover:text-[#FFFBF4]">
-            Settings
-          </button>
-
+         
+{/* 
           <button
             onClick={logoutHandle}
             className="
@@ -175,7 +191,70 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
             "
           >
             Logout
-          </button>
+          </button> */}
+          {/* User Profile */}
+          <div className="mt-3 border-t border-[#D8CFBC]/10 pt-3">
+
+            <div className="
+          flex
+          items-center
+          gap-3
+          rounded-xl
+          px-2
+          py-2
+        ">
+
+              {/* Avatar */}
+              <div className="
+            flex
+            h-10
+            w-10
+            shrink-0
+            items-center
+            justify-center
+            rounded-full
+            bg-[#D8CFBC]
+            text-xs
+            font-semibold
+            text-[#11120D]
+          ">
+                VP
+              </div>
+
+              {/* User */}
+              <div className="min-w-0 flex-1">
+
+                <p className="truncate text-sm font-medium text-[#FFFBF4]">
+                  vatsal patel
+                </p>
+
+                <p className="text-xs text-[#D8CFBC]/45">
+                  Go
+                </p>
+
+              </div>
+
+              {/* More */}
+              <button
+                className="
+              flex
+              h-8
+              w-8
+              items-center
+              justify-center
+              rounded-lg
+              text-[#D8CFBC]/50
+              transition
+              hover:bg-[#565449]/25
+              hover:text-[#FFFBF4]
+            "
+              >
+                ⋯
+              </button>
+
+            </div>
+
+          </div>
 
         </div>
       </aside>

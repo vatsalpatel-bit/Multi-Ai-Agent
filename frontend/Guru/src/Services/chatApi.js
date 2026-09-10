@@ -18,3 +18,12 @@ export const getConversationApi = async () => {
         console.log("Conversation api error")
     }
 }
+
+export const conversationApi = async () => {
+    try {
+        const res = await api.post("/api/v1/chat/c");
+        return res.data;
+    } catch (error) {
+        console.log(`Conversation api error:${error}`);
+    }
+}
