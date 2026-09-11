@@ -14,6 +14,10 @@ export const agentApi = async (req, res) => {
 
         const userId = req.headers["x-user-id"];
         const userType = req.headers["x-user-type"];
+        const chatServiceHeaders = {
+            "x-user-id": userId,
+            "x-user-type": userType
+        };
 
         let currentConversationId = conversationId;
 
@@ -22,10 +26,7 @@ export const agentApi = async (req, res) => {
                 `${process.env.CHAT_SERVICE_URL}/api/v1/chat/c`,
                 {},
                 {
-                    headers: {
-                        "x-user-id": userId,
-                        "x-user-type": userType
-                    }
+                    headers: chatServiceHeaders
                 }
             );
 
@@ -40,7 +41,8 @@ export const agentApi = async (req, res) => {
                 conversationId: currentConversationId,
                 role: "user",
                 content: prompt.trim()
-            }
+            },
+            { headers: chatServiceHeaders }
         );
 
         // Generate AI response
@@ -58,7 +60,8 @@ export const agentApi = async (req, res) => {
                 conversationId: currentConversationId,
                 role: "assistant",
                 content: response
-            }
+            },
+            { headers: chatServiceHeaders }
         );
 
         return res.status(200).json({

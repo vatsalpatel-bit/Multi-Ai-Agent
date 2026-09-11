@@ -73,7 +73,18 @@ export const getConversationsApi = async (req, res) => {
 export const updateConversationApi = async (req, res) => {
     try {
         const { conversationId, title } = req.body;
+
+        const userId = req.headers["x-user-id"];
+        const userType = req.headers["x-user-type"];
+
+        if (!userId || !userType) {
+            return res.status(401).json({
+                success: false,
+                message: "Unauthorized"
+            });
+        }
         const conversation = await Conversation.findByIdAndUpdate(conversationId, { title });
+
         if (!conversation) {
             return res.status(404).json({
                 success: false,
@@ -92,10 +103,13 @@ export const updateConversationApi = async (req, res) => {
 export const saveMessageApi = async (req, res) => {
     try {
 
+        const userId = req.headers["x-user-id"];
+        const userType = req.headers["x-user-type"];
+
         const { conversationId, role, content } = req.body;
 
         const message = await Message.create({
-            conversationId, role, content,
+            conversationId, role, content, userId, userType
         });
 
         return res.status(200).json(message);
@@ -111,10 +125,13 @@ export const saveMessageApi = async (req, res) => {
 
 export const getMessagesApi = async (req, res) => {
     try {
+        const userId = req.headers["x-user-id"];
+        const userType = req.headers["x-user-type"];
+
         const conversationId = req.params?.conversationId;
 
         const messages = await Message.find({
-            conversationId,
+            conversationId, userId, userType
         }).sort({ createdAt: 1 });
 
         return res.status(200).json(messages)

@@ -1,16 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../Layouts/Navbar.jsx";
 import Sidebar from "../Layouts/Sidebar.jsx";
 import { agentApi } from "../Services/agentApi.js";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+    import { getConversationApi } from "../Services/chatApi.js";
+    import { setAllConversations } from "../redux/slices/chatSlice.js";
+
 
 const Home = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [message, setMessage] = useState({
         conversationId: null,
         prompt: ""
     });
+
+    useEffect(() => {
+        const fetchGetConversationApi = async () => {
+            const res = await getConversationApi();
+            dispatch(setAllConversations(res.conversations))
+        }
+        fetchGetConversationApi();
+    }, [dispatch]);
 
     const submitHandler = async () => {
         if (!message.prompt.trim()) return;
@@ -20,7 +34,6 @@ const Home = () => {
                 conversationId: message.conversationId,
                 prompt: message.prompt
             });
-            console.log(res)
             navigate(`/chat/${res.conversationId}`);
         } catch {
             console.log("Faild to send message")

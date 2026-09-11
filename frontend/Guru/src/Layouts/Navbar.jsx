@@ -1,11 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LoginPopup from "./LoginPopup.jsx";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getConversationApi } from "../Services/chatApi.js";
+import { setAllConversations } from "../redux/slices/chatSlice.js";
 
 const Navbar = () => {
+  const dispatch = useDispatch();
   const [showLogin, setShowLogin] = useState(false);
 
   const user = useSelector((state) => state.user.user);
+  
+  useEffect(() => {
+    if (!user) return;
+    const fetchGetConversationApi = async () => {
+      const res = await getConversationApi();
+      dispatch(setAllConversations(res.conversations))
+    }
+    fetchGetConversationApi();
+  }, [user, dispatch]);
 
   return (
     <>

@@ -6,6 +6,7 @@ const guestOrAuthMiddleware = async (req, res, next) => {
         // Check authenticated user
 
         const sessionId = req.cookies?.session;
+        // console.log(sessionId)
         if (sessionId) {
 
             const session = await redis.get(`session:${sessionId}`);
@@ -23,7 +24,7 @@ const guestOrAuthMiddleware = async (req, res, next) => {
 
         // No authenticated session → guest user
         let guestId = req.cookies?.guestSession;
-
+        console.log(guestId)
         if (!guestId) {
             guestId = crypto.randomUUID();
 

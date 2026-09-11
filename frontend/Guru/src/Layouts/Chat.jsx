@@ -7,6 +7,8 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addMessage, setAllMessages } from "../redux/slices/chatSlice.js";
 import { agentApi } from "../Services/agentApi.js";
+import { getConversationApi } from "../Services/chatApi.js";
+import { setAllConversations } from "../redux/slices/chatSlice.js";
 
 const Chat = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -31,8 +33,18 @@ const Chat = () => {
                 console.log("Faild to get message api ")
             }
         }
+
         fetchGetMessagesApi();
     }, [conversationId, dispatch])
+
+    useEffect(() => {
+        const fetchGetConversationApi = async () => {
+            const res = await getConversationApi();
+            dispatch(setAllConversations(res.conversations))
+        }
+        fetchGetConversationApi();
+    }, [dispatch]);
+
 
     const submitHandler = async () => {
         if (!prompt.trim()) return;

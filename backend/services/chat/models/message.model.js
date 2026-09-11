@@ -18,6 +18,17 @@ const messageSchema = new mongoose.Schema(
         content: {
             type: String,
             required: true
+        },
+        userId: {
+            type: String,
+            required: true,
+            index: true
+        },
+
+        userType: {
+            type: String,
+            enum: ["user", "guest"],
+            required: true
         }
     },
     {
