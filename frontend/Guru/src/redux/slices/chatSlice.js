@@ -17,10 +17,22 @@ const chatSlice = createSlice({
             state.allConversations = action.payload
         },
         addConversation: (state, action) => {
-            state.allConversations.push(action.payload)
+            state.allConversations.unshift(action.payload)
+        },
+        moveConversationOnTop: (state, action) => {
+            const conversationId = action.payload;
+
+            const index = state.allConversations.findIndex((conversation) =>
+                conversation.conversationId === conversationId
+            );
+            if (index === -1) return;
+
+            const [conversation] = state.allConversations.slice(index, 1);
+
+            state.allConversations.unshift(conversation);
         }
     }
 });
 
-export const { setAllMessages, addMessage, setAllConversations, addConversation } = chatSlice.actions;
+export const { setAllMessages, addMessage, setAllConversations, addConversation, moveConversationOnTop } = chatSlice.actions;
 export default chatSlice.reducer;

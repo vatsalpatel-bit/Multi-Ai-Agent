@@ -18,7 +18,6 @@ export const saveConversationApi = async (req, res) => {
             userId,
             userType
         });
-
         return res.status(201).json(conversation);
 
     } catch (error) {

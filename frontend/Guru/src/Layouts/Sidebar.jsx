@@ -15,9 +15,8 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const convsersations = useSelector((state) => state.chat.allConversations)
+ 
   const user = useSelector((state) => state.user.user);
-
-  // console.log(convsersations)
 
   const logoutHandle = async () => {
     try {
@@ -30,7 +29,6 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
       console.error("Logout failed:", error);
     }
   };
-
 
   useEffect(() => {
     const fetchGetConversationApi = async () => {
@@ -251,7 +249,7 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
                   <p className="truncate text-sm font-medium text-[#FFFBF4]">
                     {user?.name}
                   </p>
-                  
+
                 </div>
 
                 {/* More */}

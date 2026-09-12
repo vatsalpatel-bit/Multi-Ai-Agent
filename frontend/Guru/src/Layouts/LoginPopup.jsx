@@ -13,7 +13,6 @@ const LoginPopup = ({ onClose }) => {
       const data = await signInWithPopup(auth, googleProvider);
       const token = await data.user.getIdToken();
       const res = await loginApi(token);
-      console.log(res)
       dispatch(setUser(res.user))
       onClose();
     } catch (error) {
