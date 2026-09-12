@@ -15,7 +15,7 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const convsersations = useSelector((state) => state.chat.allConversations)
- 
+
   const user = useSelector((state) => state.user.user);
 
   const logoutHandle = async () => {
@@ -40,10 +40,10 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
 
   const handleConversation = async () => {
     try {
-      const res = await conversationApi();
-      console.log(res);
-      dispatch(addConversation(res))
-      navigate(`/chat/${res._id}`);
+      // const res = await conversationApi();
+      // console.log(res);
+      // dispatch(addConversation(res))
+      navigate(`/`);
     } catch (error) {
       console.log("Conversation create request faild")
     }

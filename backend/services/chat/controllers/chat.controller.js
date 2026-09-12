@@ -101,20 +101,37 @@ export const updateConversationApi = async (req, res) => {
 
 export const saveMessageApi = async (req, res) => {
     try {
-
         const userId = req.headers["x-user-id"];
         const userType = req.headers["x-user-type"];
 
         const { conversationId, role, content } = req.body;
 
         const message = await Message.create({
-            conversationId, role, content, userId, userType
+            conversationId,
+            role,
+            content,
+            userId,
+            userType
         });
 
-        return res.status(200).json(message);
+        await Conversation.findOneAndUpdate(
+            {
+                conversationId,
+                userId,
+                userType
+            },
+            {
+                $set: {
+                    updatedAt: new Date()
+                }
+            }
+        );
+
+        return res.status(201).json(message);
 
     } catch (error) {
-        console.log(error)
+        console.error("SAVE MESSAGE ERROR:", error);
+
         return res.status(500).json({
             success: false,
             message: "Server error"

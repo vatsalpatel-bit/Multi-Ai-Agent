@@ -5,7 +5,7 @@ import Message from "./Message.jsx";
 import { getMessageAPi } from "../Services/chatApi.js";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { addMessage, setAllMessages } from "../redux/slices/chatSlice.js";
+import { addMessage, moveConversationOnTop, setAllMessages } from "../redux/slices/chatSlice.js";
 import { agentApi } from "../Services/agentApi.js";
 import { getConversationApi } from "../Services/chatApi.js";
 import { setAllConversations } from "../redux/slices/chatSlice.js";
@@ -18,7 +18,6 @@ const Chat = () => {
     const { id: conversationId } = useParams();
     const dispatch = useDispatch();
 
-
     const messages = useSelector((state) => state.chat.allMessages);
 
     useEffect(() => {
@@ -27,7 +26,7 @@ const Chat = () => {
                 const res = await getMessageAPi(conversationId);
                 dispatch(setAllMessages(res));
             } catch {
-                console.log("Faild to get message api ")
+                console.log("Faild to get message api")
             }
         }
 
@@ -41,7 +40,6 @@ const Chat = () => {
         }
         fetchGetConversationApi();
     }, [dispatch]);
-
 
     const submitHandler = async () => {
         if (!prompt.trim()) return;
@@ -59,7 +57,10 @@ const Chat = () => {
                 conversationId,
                 prompt: currentPrompt
             });
-  
+            console.log(res)
+            console.log("start")
+            dispatch(moveConversationOnTop(conversationId));
+            console.log("end")
             dispatch(addMessage({
                 _id: crypto.randomUUID(),
                 role: 'assistant',
@@ -69,7 +70,6 @@ const Chat = () => {
             console.log("Faild to send message")
         }
     }
-
 
     return (
         <div className="min-h-screen overflow-hidden bg-[#11120D] text-[#FFFBF4]">

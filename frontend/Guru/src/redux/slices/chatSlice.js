@@ -22,13 +22,13 @@ const chatSlice = createSlice({
         moveConversationOnTop: (state, action) => {
             const conversationId = action.payload;
 
-            const index = state.allConversations.findIndex((conversation) =>
-                conversation.conversationId === conversationId
+            const index = state.allConversations.findIndex(
+                (conversation) => conversation._id === conversationId
             );
-            if (index === -1) return;
 
-            const [conversation] = state.allConversations.slice(index, 1);
+            if (index <= 0) return;
 
+            const [conversation] = state.allConversations.splice(index, 1);
             state.allConversations.unshift(conversation);
         }
     }
