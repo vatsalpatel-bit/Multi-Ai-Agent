@@ -90,6 +90,20 @@ export const updateConversationApi = async (req, res) => {
                 message: "Conversation not found"
             })
         };
+
+        await Conversation.findOneAndUpdate(
+            {
+                _id: conversationId,
+                userId,
+                userType
+            },
+            {
+                $set: {
+                    updatedAt: new Date()
+                }
+            }
+        );
+
         return res.status(200).json(conversation)
     } catch (error) {
         return res.status(500).json({

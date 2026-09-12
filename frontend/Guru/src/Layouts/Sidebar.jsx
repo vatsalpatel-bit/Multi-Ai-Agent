@@ -2,18 +2,22 @@ import { useDispatch, useSelector } from "react-redux";
 import { logoutApi } from "../Services/authApi.js";
 import { clearUser } from "../redux/slices/userSlice.js";
 import { useEffect } from "react";
-import { conversationApi, getConversationApi } from "../Services/chatApi.js";
-import { addConversation, setAllConversations } from "../redux/slices/chatSlice.js";
+import { getConversationApi, updateConversationTitleApi } from "../Services/chatApi.js";
+import { moveConversationOnTop, setAllConversations, updateConversation } from "../redux/slices/chatSlice.js";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import UserMenu from "./UserMenu";
 import LoginPopup from "./LoginPopup.jsx";
+import ConversationMenu from "./ConversationMenu.jsx";
 
 const Sidebar = ({ isOpen, onClose, onOpen }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [activeMenu, setActiveMenu] = useState(null);
+  const [editingId, setEditingId] = useState(null);
+  const [title, setTitle] = useState("")
   const convsersations = useSelector((state) => state.chat.allConversations)
 
   const user = useSelector((state) => state.user.user);
@@ -40,15 +44,32 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
 
   const handleConversation = async () => {
     try {
-      // const res = await conversationApi();
-      // console.log(res);
-      // dispatch(addConversation(res))
       navigate(`/`);
     } catch (error) {
       console.log("Conversation create request faild")
     }
   }
+  const handleRename = async (conversationId, newTitle) => {
+    if (!newTitle.trim()) return;
 
+    try {
+      await updateConversationTitleApi(
+        conversationId,
+        newTitle.trim()
+      );
+
+      dispatch(
+        updateConversation({
+          conversationId,
+          title: newTitle.trim()
+        })
+      );
+
+      dispatch(moveConversationOnTop(conversationId));
+    } catch (error) {
+      console.error("Rename failed:", error);
+    }
+  };
   return (
     <>
       {/* Open Sidebar Button */}
@@ -158,37 +179,141 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
 
 
         {/* Recent Chats */}
-        <div className="mt-9 min-h-0 flex-1 overflow-y-auto">
+        <div className="mt-6 min-h-0 flex-1 overflow-y-auto">
 
           <p className="mb-4 px-2 text-[11px] font-semibold uppercase tracking-[2px] text-[#D8CFBC]/40">
             Recent Chats
           </p>
 
-          <div className="space-y-1">
+          {convsersations.map((conversation) => (
+            <div
+              key={conversation._id}
+              className="relative"
+            >
 
-            {convsersations.map((conversation) => (
-              <button
-                key={conversation._id}
-                onClick={() => navigate(`/chat/${conversation._id}`)}
+              <div
                 className="
-            w-full
-            truncate
-            rounded-lg
-            px-3
-            py-2.5
-            text-left
-            text-sm
-            text-[#D8CFBC]/70
-            transition
-            hover:bg-[#565449]/25
-            hover:text-[#FFFBF4]
-          "
+    group
+    flex
+    w-full
+    items-center
+    rounded-lg
+    transition
+    hover:bg-[#565449]/25
+  "
               >
-                {conversation.title}
-              </button>
-            ))}
+                {editingId === conversation._id ? (
+                  <textarea
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={async (e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
 
-          </div>
+                        await handleRename(conversation._id, title);
+
+                        setEditingId(null);
+                        setTitle("");
+                      }
+
+                      if (e.key === "Escape") {
+                        setEditingId(null);
+                        setTitle("");
+                      }
+                    }}
+                    autoFocus
+                    rows={1}
+                    className="
+        min-w-0
+        flex-1
+        resize-none
+        overflow-hidden
+        rounded-lg
+        bg-transparent
+        px-3
+        py-2.5
+        text-sm
+        text-[#FFFBF4]
+        outline-none
+      "
+                  />
+                ) : (
+                  <button
+                    onClick={() => {
+                      navigate(`/chat/${conversation._id}`);
+                      setActiveMenu(null);
+                    }}
+                    className="
+        min-w-0
+        flex-1
+        truncate
+        px-3
+        py-2.5
+        text-left
+        text-sm
+        text-[#D8CFBC]/70
+        group-hover:text-[#FFFBF4]
+      "
+                  >
+                    {conversation.title}
+                  </button>
+                )}
+
+                {/* Three Dots */}
+                {editingId !== conversation._id && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+
+                      setActiveMenu(
+                        activeMenu === conversation._id
+                          ? null
+                          : conversation._id
+                      );
+                    }}
+                    className="
+        mr-2
+        flex
+        h-7
+        w-7
+        shrink-0
+        items-center
+        justify-center
+        rounded-md
+        text-[#D8CFBC]/50
+        opacity-0
+        transition
+        group-hover:opacity-100
+        hover:bg-[#565449]/40
+        hover:text-[#FFFBF4]
+      "
+                  >
+                    ⋯
+                  </button>
+                )}
+              </div>
+
+
+              {/* Menu */}
+              {activeMenu === conversation._id && (
+                <ConversationMenu
+                  onRename={() => {
+                    const conversationId = conversation._id;
+                    const title = conversation.title;
+                    setEditingId(conversationId);
+                    setTitle(title)
+                    setActiveMenu(null);
+                  }}
+                />
+              )}
+
+            </div>
+          ))}
+
+
+
+
 
         </div>
 

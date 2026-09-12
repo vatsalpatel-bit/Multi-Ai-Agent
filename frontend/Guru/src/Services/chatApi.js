@@ -27,3 +27,16 @@ export const conversationApi = async () => {
         console.log(`Conversation api error:${error}`);
     }
 }
+
+export const updateConversationTitleApi = async (conversationId, title) => {
+    try {
+        const res = await api.post("/api/v1/chat/update/c", {
+            conversationId,
+            title
+        });
+        return res.data;
+    } catch (error) {
+        console.log("Title rename faild");
+        throw error;
+    }
+}

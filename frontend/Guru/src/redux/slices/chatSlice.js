@@ -30,9 +30,21 @@ const chatSlice = createSlice({
 
             const [conversation] = state.allConversations.splice(index, 1);
             state.allConversations.unshift(conversation);
-        }
+        },
+        updateConversation: (state, action) => {
+            const { conversationId, title } = action.payload;
+
+            const conversation = state.allConversations.find(
+                (conversation) =>
+                    conversation._id === conversationId
+            );
+
+            if (conversation) {
+                conversation.title = title;
+            }
+        },
     }
 });
 
-export const { setAllMessages, addMessage, setAllConversations, addConversation, moveConversationOnTop } = chatSlice.actions;
+export const { setAllMessages, addMessage, setAllConversations, addConversation, moveConversationOnTop, updateConversation } = chatSlice.actions;
 export default chatSlice.reducer;
