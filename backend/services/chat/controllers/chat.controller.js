@@ -119,7 +119,7 @@ export const saveMessageApi = async (req, res) => {
         const userType = req.headers["x-user-type"];
 
         const { conversationId, role, content } = req.body;
-
+        console.log(content)
         const message = await Message.create({
             conversationId,
             role,

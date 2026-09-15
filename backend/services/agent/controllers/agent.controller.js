@@ -51,7 +51,13 @@ export const agentApi = async (req, res) => {
             prompt: prompt.trim()
         });
 
-        const response = result.aiResponse;
+        const response = typeof result.aiResponse === "string"
+            ? result.aiResponse.trim()
+            : "";
+
+        if (!response) {
+            throw new Error("The selected agent did not produce a response");
+        }
 
         // Save assistant message
         await axios.post(

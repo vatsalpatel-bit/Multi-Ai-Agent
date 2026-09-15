@@ -45,8 +45,8 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
   const handleConversation = async () => {
     try {
       navigate(`/`);
-    } catch (error) {
-      console.log("Conversation create request faild")
+    } catch {
+      console.log("Conversation create request failed");
     }
   }
   const handleRename = async (conversationId, newTitle) => {
@@ -207,6 +207,7 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     onClick={(e) => e.stopPropagation()}
+                    
                     onKeyDown={async (e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();

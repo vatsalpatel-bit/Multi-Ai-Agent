@@ -1,3 +1,5 @@
+import Markdown from "react-markdown";
+
 const Message = ({ role, content }) => {
     const isUser = role === "user";
 
@@ -8,7 +10,6 @@ const Message = ({ role, content }) => {
                 ${isUser ? "justify-end" : "justify-start"}
             `}
         >
-            {/* AI Avatar */}
             {!isUser && (
                 <div
                     className="
@@ -26,7 +27,6 @@ const Message = ({ role, content }) => {
                 </div>
             )}
 
-            {/* Message */}
             <div
                 className={`
                     max-w-[680px]
@@ -51,13 +51,13 @@ const Message = ({ role, content }) => {
                         }
                     `}
                 >
-                    {content}
+                    <Markdown>
+                        {content}
+                    </Markdown>
                 </div>
 
-                {/* AI Actions */}
                 {!isUser && (
                     <div className="mt-3 flex items-center gap-1">
-
                         <button
                             className="
                                 rounded-lg
@@ -85,7 +85,6 @@ const Message = ({ role, content }) => {
                         >
                             Regenerate
                         </button>
-
                     </div>
                 )}
             </div>
