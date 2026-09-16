@@ -3,7 +3,6 @@ import Message from "../models/message.model.js";
 
 export const saveConversationApi = async (req, res) => {
     try {
-        console.log("1")
         const userId = req.headers["x-user-id"];
         const userType = req.headers["x-user-type"];
 
@@ -13,7 +12,6 @@ export const saveConversationApi = async (req, res) => {
                 message: "User identity is required"
             });
         }
-        console.log("2")
         const conversation = await Conversation.create({
             userId,
             userType
@@ -119,7 +117,7 @@ export const saveMessageApi = async (req, res) => {
         const userType = req.headers["x-user-type"];
 
         const { conversationId, role, content } = req.body;
-        console.log(content)
+
         const message = await Message.create({
             conversationId,
             role,

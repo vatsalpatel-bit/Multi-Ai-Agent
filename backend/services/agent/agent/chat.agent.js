@@ -1,4 +1,6 @@
+import { AIMessage, HumanMessage } from "@langchain/core/messages";
 import { getAgent } from "../config/llmModels.js"
+import { getMemory } from "../config/memory.js";
 
 export const chatAgent = async (state) => {
     const llm = getAgent("chat");
@@ -49,16 +51,23 @@ When providing code:
 
 Always prioritize clarity, natural conversation, and readability.
 `;
-    const response = await llm.invoke([
-        {
-            role: "system",
-            content: systemPrompt,
-        },
-        {
-            role: "human",
-            content: state.prompt
+    const history = await getMemory(state.conversationId);
+    const messages = [
+        new AIMessage(systemPrompt)
+    ];
+
+    history.forEach(msg => {
+        if (msg.role === "user") {
+            messages.push(new HumanMessage(msg.content))
         }
-    ]);
+        if (msg.role === "assistant") {
+            messages.push(new AIMessage(msg.content))
+        }
+    });
+
+    messages.push(new HumanMessage(state.prompt))
+    console.log(messages)
+    const response = await llm.invoke(messages);
     return {
         ...state,
         aiResponse: response.content

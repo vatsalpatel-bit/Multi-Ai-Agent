@@ -1,10 +1,12 @@
+import { addMessage } from "../config/memory.js";
 import { graph } from "../graph/graph.js";
 import axios from "axios";
+import redis from "../../../shared/redis/redis.js   ";
 
 export const agentApi = async (req, res) => {
     try {
         const { conversationId, prompt } = req.body;
-
+        // await redis.del(`messages-${conversationId}`)
         if (!prompt || !prompt.trim()) {
             return res.status(400).json({
                 success: false,
@@ -45,12 +47,17 @@ export const agentApi = async (req, res) => {
             { headers: chatServiceHeaders }
         );
 
+        await addMessage({
+            conversationId: currentConversationId,
+            role: "user",
+            content: prompt.trim()
+        });
+
         // Generate AI response
         const result = await graph.invoke({
             conversationId: currentConversationId,
             prompt: prompt.trim()
         });
-
         const response = typeof result.aiResponse === "string"
             ? result.aiResponse.trim()
             : "";
@@ -69,7 +76,11 @@ export const agentApi = async (req, res) => {
             },
             { headers: chatServiceHeaders }
         );
-
+        await addMessage({
+            conversationId: currentConversationId,
+            role: "assistant",
+            content: response
+        });
         return res.status(200).json({
             success: true,
             conversationId: currentConversationId,
