@@ -171,3 +171,21 @@ export const getMessagesApi = async (req, res) => {
         })
     }
 }
+
+export const getUserMessagesApi = async (req, res) => {
+    try {
+        const userId = req.params?.userId;
+        console.log(userId)
+        const messages = await Message.find({
+            userId
+        }).sort({ createdAt: 1 }).limit(50);
+
+        return res.status(200).json(messages)
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            success: false,
+            message: "Server error"
+        })
+    }
+}

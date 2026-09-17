@@ -1,8 +1,8 @@
 import axios from "axios"
 
-export const getMessagesApi = async (conversationId) => {
+export const getUserMessagesApi = async (userId) => {
     try {
-        const res = await axios.get(`${process.env.CHAT_SERVICE_URL}/api/v1/chat/get/m/${conversationId}`)
+        const res = await axios.get(`${process.env.CHAT_SERVICE_URL}/api/v1/chat/get/m/${userId}`)
         return res.data;
     } catch (error) {
         console.log(error);

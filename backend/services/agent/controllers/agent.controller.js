@@ -1,12 +1,10 @@
 import { addMessage } from "../config/memory.js";
 import { graph } from "../graph/graph.js";
 import axios from "axios";
-import redis from "../../../shared/redis/redis.js   ";
 
 export const agentApi = async (req, res) => {
     try {
         const { conversationId, prompt } = req.body;
-        // await redis.del(`messages-${conversationId}`)
         if (!prompt || !prompt.trim()) {
             return res.status(400).json({
                 success: false,
@@ -16,6 +14,7 @@ export const agentApi = async (req, res) => {
 
         const userId = req.headers["x-user-id"];
         const userType = req.headers["x-user-type"];
+       
         const chatServiceHeaders = {
             "x-user-id": userId,
             "x-user-type": userType
@@ -47,16 +46,11 @@ export const agentApi = async (req, res) => {
             { headers: chatServiceHeaders }
         );
 
-        await addMessage({
-            conversationId: currentConversationId,
-            role: "user",
-            content: prompt.trim()
-        });
-
         // Generate AI response
         const result = await graph.invoke({
             conversationId: currentConversationId,
-            prompt: prompt.trim()
+            prompt: prompt.trim(),
+            userId,
         });
         const response = typeof result.aiResponse === "string"
             ? result.aiResponse.trim()
@@ -77,7 +71,13 @@ export const agentApi = async (req, res) => {
             { headers: chatServiceHeaders }
         );
         await addMessage({
-            conversationId: currentConversationId,
+            userId,
+            role: "user",
+            content: prompt.trim()
+        });
+
+        await addMessage({
+            userId,
             role: "assistant",
             content: response
         });

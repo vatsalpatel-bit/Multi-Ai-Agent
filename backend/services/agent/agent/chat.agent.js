@@ -51,7 +51,7 @@ When providing code:
 
 Always prioritize clarity, natural conversation, and readability.
 `;
-    const history = await getMemory(state.conversationId);
+    const history = await getMemory(state.userId);
     const messages = [
         new AIMessage(systemPrompt)
     ];
@@ -66,7 +66,7 @@ Always prioritize clarity, natural conversation, and readability.
     });
 
     messages.push(new HumanMessage(state.prompt))
-    console.log(messages)
+
     const response = await llm.invoke(messages);
     return {
         ...state,
