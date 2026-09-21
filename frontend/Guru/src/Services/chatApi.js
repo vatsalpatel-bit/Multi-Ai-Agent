@@ -36,7 +36,21 @@ export const updateConversationTitleApi = async (conversationId, title) => {
         });
         return res.data;
     } catch (error) {
-        console.log("Title rename faild");
+        console.log("Title rename request faild");
         throw error;
     }
 }
+
+export const deleteConversationApi = async (conversationId) => {
+    try {
+        const res = await api.delete("/api/v1/chat/del/c", {
+            data: { conversationId }
+        });
+        return res.data;
+    } catch (error) {
+        console.log("Delete conversation request faild");
+        throw error;
+    }
+}
+
+

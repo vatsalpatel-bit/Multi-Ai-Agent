@@ -1,5 +1,6 @@
 import Conversation from "../models/conversation.model.js";
 import Message from "../models/message.model.js";
+import redis from "../../../shared/redis/redis.js";
 
 export const saveConversationApi = async (req, res) => {
     try {
@@ -104,6 +105,61 @@ export const updateConversationApi = async (req, res) => {
 
         return res.status(200).json(conversation)
     } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Server error"
+        })
+    }
+}
+
+export const deleteConversationApi = async (req, res) => {
+    try {
+        const userId = req.headers["x-user-id"];
+        const userType = req.headers["x-user-type"];
+
+        if (!userId || !userType) {
+            return res.status(401).json({
+                success: false,
+                message: "Unauthorized"
+            });
+        }
+
+        const { conversationId } = req.body || {};
+        console.log(req.body)
+        if (!conversationId) {
+            return res.status(400).json({
+                success: false,
+                message: "Conversation id is required"
+            });
+        }
+
+        const conversation = await Conversation.findOne({
+            _id: conversationId,
+            userId: userId
+        });
+
+        if (!conversation) {
+            return res.status(404).json({
+                message: "Conversation not found"
+            });
+        };
+
+        await Conversation.deleteOne({ _id: conversationId });
+
+        await Message.deleteMany({ conversationId: conversationId });
+
+        const key = `messages-${userId}`
+        const cached = await redis.get(key);
+        if (cached) {
+            const messages = JSON.parse(cached);
+            const latestMessages = messages.filter(msg => msg.conversationId.toString() !== conversationId.toString());
+            await redis.set(key, JSON.stringify(latestMessages))
+        }
+
+        return res.status(200).json({ message: "Delete conversation successfully" })
+
+    } catch (error) {
+        console.log(error)
         return res.status(500).json({
             success: false,
             message: "Server error"

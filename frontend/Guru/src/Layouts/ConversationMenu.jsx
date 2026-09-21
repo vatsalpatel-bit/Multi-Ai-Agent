@@ -1,4 +1,4 @@
-const ConversationMenu = ({ onRename }) => {
+const ConversationMenu = ({ onRename, onDelete }) => {
     return (
         <div
             className="
@@ -37,6 +37,29 @@ const ConversationMenu = ({ onRename }) => {
                 </span>
 
                 Rename
+            </button>
+            <button
+                onClick={onDelete}
+                className="
+                    flex
+                    w-full
+                    items-center
+                    gap-3
+                    rounded-lg
+                    px-3
+                    py-2.5
+                    text-left
+                    text-sm
+                    text-[#FFFBF4]
+                    transition
+                    hover:bg-[#565449]/50
+                "
+            >
+                <span className="text-[#D8CFBC]">
+                    🗑
+                </span>
+
+                Delete
             </button>
         </div>
     );

@@ -135,6 +135,12 @@ const Chat = () => {
                             {/* Input */}
                             <textarea
                                 value={prompt}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" && !e.shiftKey) {
+                                        e.preventDefault();
+                                        submitHandler();
+                                    }
+                                }}
                                 onChange={(e) => setPrompt(e.target.value)}
                                 rows="1"
                                 placeholder="Message AI Agent..."

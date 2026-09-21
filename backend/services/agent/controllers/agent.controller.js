@@ -14,7 +14,7 @@ export const agentApi = async (req, res) => {
 
         const userId = req.headers["x-user-id"];
         const userType = req.headers["x-user-type"];
-       
+
         const chatServiceHeaders = {
             "x-user-id": userId,
             "x-user-type": userType
@@ -71,12 +71,14 @@ export const agentApi = async (req, res) => {
             { headers: chatServiceHeaders }
         );
         await addMessage({
+            conversationId,
             userId,
             role: "user",
             content: prompt.trim()
         });
 
         await addMessage({
+            conversationId,
             userId,
             role: "assistant",
             content: response

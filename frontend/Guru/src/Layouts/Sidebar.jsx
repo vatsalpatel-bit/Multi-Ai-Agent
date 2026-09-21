@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logoutApi } from "../Services/authApi.js";
 import { clearUser } from "../redux/slices/userSlice.js";
 import { useEffect } from "react";
-import { getConversationApi, updateConversationTitleApi } from "../Services/chatApi.js";
+import { deleteConversationApi, getConversationApi, updateConversationTitleApi } from "../Services/chatApi.js";
 import { moveConversationOnTop, setAllConversations, updateConversation } from "../redux/slices/chatSlice.js";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -70,6 +70,11 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
       console.error("Rename failed:", error);
     }
   };
+
+  const delConversationHandle = async (convsersationId) => {
+    const res = await deleteConversationApi(convsersationId);
+    console.log(res)
+  }
   return (
     <>
       {/* Open Sidebar Button */}
@@ -207,7 +212,7 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     onClick={(e) => e.stopPropagation()}
-                    
+
                     onKeyDown={async (e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
@@ -306,16 +311,17 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
                     setTitle(title)
                     setActiveMenu(null);
                   }}
+                  onDelete={() => {
+                    const conversationId = conversation._id;
+                    delConversationHandle(conversationId);
+                    setActiveMenu(null);
+                  }}
+
                 />
               )}
 
             </div>
           ))}
-
-
-
-
-
         </div>
 
 
