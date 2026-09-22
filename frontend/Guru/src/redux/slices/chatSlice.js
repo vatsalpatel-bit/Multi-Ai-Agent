@@ -43,8 +43,15 @@ const chatSlice = createSlice({
                 conversation.title = title;
             }
         },
+        removeConversation: (state, action) => {
+            const { conversationId } = action.payload;
+            console.log(conversationId)
+            state.allConversations = state.allConversations.filter(
+                con => con.conversationId?.toString() !== conversationId?.toString()
+            );
+        }
     }
 });
 
-export const { setAllMessages, addMessage, setAllConversations, addConversation, moveConversationOnTop, updateConversation } = chatSlice.actions;
+export const { setAllMessages, addMessage, setAllConversations, addConversation, moveConversationOnTop, updateConversation, removeConversation } = chatSlice.actions;
 export default chatSlice.reducer;

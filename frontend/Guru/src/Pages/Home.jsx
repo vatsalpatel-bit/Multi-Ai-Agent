@@ -4,8 +4,8 @@ import Sidebar from "../Layouts/Sidebar.jsx";
 import { agentApi } from "../Services/agentApi.js";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-    import { getConversationApi } from "../Services/chatApi.js";
-    import { setAllConversations } from "../redux/slices/chatSlice.js";
+import { getConversationApi } from "../Services/chatApi.js";
+import { setAllConversations } from "../redux/slices/chatSlice.js";
 
 
 const Home = () => {
@@ -98,6 +98,12 @@ const Home = () => {
                                 ...prev,
                                 prompt: e.target.value
                             }))}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" && !e.shiftKey) {
+                                    e.preventDefault();
+                                    submitHandler();
+                                }
+                            }}
 
                             rows="1"
                             placeholder="Ask your AI agent anything..."

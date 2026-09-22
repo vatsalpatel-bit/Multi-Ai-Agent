@@ -3,7 +3,7 @@ import { logoutApi } from "../Services/authApi.js";
 import { clearUser } from "../redux/slices/userSlice.js";
 import { useEffect } from "react";
 import { deleteConversationApi, getConversationApi, updateConversationTitleApi } from "../Services/chatApi.js";
-import { moveConversationOnTop, setAllConversations, updateConversation } from "../redux/slices/chatSlice.js";
+import { moveConversationOnTop, removeConversation, setAllConversations, updateConversation } from "../redux/slices/chatSlice.js";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import UserMenu from "./UserMenu";
@@ -71,9 +71,11 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
     }
   };
 
-  const delConversationHandle = async (convsersationId) => {
-    const res = await deleteConversationApi(convsersationId);
+  const delConversationHandle = async (conversationId) => {
+    const res = await deleteConversationApi(conversationId);
     console.log(res)
+    dispatch(removeConversation({ conversationId }))
+    navigate("/");
   }
   return (
     <>
@@ -190,7 +192,7 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
             Recent Chats
           </p>
 
-          {convsersations.map((conversation) => (
+          {convsersations?.map((conversation) => (
             <div
               key={conversation._id}
               className="relative"

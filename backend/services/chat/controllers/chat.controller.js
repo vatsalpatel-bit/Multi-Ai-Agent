@@ -125,7 +125,7 @@ export const deleteConversationApi = async (req, res) => {
         }
 
         const { conversationId } = req.body || {};
-        console.log(req.body)
+
         if (!conversationId) {
             return res.status(400).json({
                 success: false,
@@ -150,6 +150,7 @@ export const deleteConversationApi = async (req, res) => {
 
         const key = `messages-${userId}`
         const cached = await redis.get(key);
+
         if (cached) {
             const messages = JSON.parse(cached);
             const latestMessages = messages.filter(msg => msg.conversationId.toString() !== conversationId.toString());
@@ -231,7 +232,6 @@ export const getMessagesApi = async (req, res) => {
 export const getUserMessagesApi = async (req, res) => {
     try {
         const userId = req.params?.userId;
-        console.log(userId)
         const messages = await Message.find({
             userId
         }).sort({ createdAt: 1 }).limit(50);

@@ -1,6 +1,7 @@
 import { addMessage } from "../config/memory.js";
 import { graph } from "../graph/graph.js";
 import axios from "axios";
+import redis from "../../../shared/redis/redis.js";
 
 export const agentApi = async (req, res) => {
     try {
@@ -19,7 +20,7 @@ export const agentApi = async (req, res) => {
             "x-user-id": userId,
             "x-user-type": userType
         };
-
+        // await redis.del(`messages-${userId}`)
         let currentConversationId = conversationId;
 
         if (!currentConversationId) {
@@ -70,15 +71,16 @@ export const agentApi = async (req, res) => {
             },
             { headers: chatServiceHeaders }
         );
+
         await addMessage({
-            conversationId,
+            conversationId: currentConversationId,
             userId,
             role: "user",
             content: prompt.trim()
         });
 
         await addMessage({
-            conversationId,
+            conversationId: currentConversationId,
             userId,
             role: "assistant",
             content: response

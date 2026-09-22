@@ -5,16 +5,17 @@ export const getMemory = async (userId) => {
 
     const key = `messages-${userId}`;
     const cached = await redis.get(key);
-
+    
     if (cached) {
         return JSON.parse(cached);
     };
 
     const messages = await getUserMessagesApi(userId);
-    console.log(messages)
+    
     const recentMessages = messages.slice(-50);
-    console.log(recentMessages)
+    
     await redis.set(key, JSON.stringify(recentMessages), "EX", 24 * 60 * 60);
+    
     return recentMessages;
 };
 
