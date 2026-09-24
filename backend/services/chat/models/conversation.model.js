@@ -4,6 +4,8 @@ const conversationSchema = mongoose.Schema({
     title: {
         type: String,
         default: "New chat",
+        trim: true,
+        maxlength: 100
     },
     userId: {
         type: String,

@@ -26,7 +26,7 @@ export const agentApi = async (req, res) => {
         if (!currentConversationId) {
             const conversationRes = await axios.post(
                 `${process.env.CHAT_SERVICE_URL}/api/v1/chat/c`,
-                {},
+                { message: prompt.trim() },
                 {
                     headers: chatServiceHeaders
                 }

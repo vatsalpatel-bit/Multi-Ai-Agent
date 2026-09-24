@@ -1,9 +1,11 @@
 import Conversation from "../models/conversation.model.js";
 import Message from "../models/message.model.js";
 import redis from "../../../shared/redis/redis.js";
+import { genTitleAgent } from "../agent/titleGenAgent.js";
 
 export const saveConversationApi = async (req, res) => {
     try {
+
         const userId = req.headers["x-user-id"];
         const userType = req.headers["x-user-type"];
 
@@ -13,10 +15,25 @@ export const saveConversationApi = async (req, res) => {
                 message: "User identity is required"
             });
         }
+
+        const message = req.body?.message?.trim();
+
+        if (!message) {
+            return res.status(400).json({
+                success: false,
+                message: "Message is required"
+            });
+        }
+
+        const generatedTitle = await genTitleAgent(message);
+        const title = generatedTitle.trim() ?? "New chat";
+
         const conversation = await Conversation.create({
+            title,
             userId,
             userType
         });
+
         return res.status(201).json(conversation);
 
     } catch (error) {
