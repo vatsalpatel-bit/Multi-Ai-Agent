@@ -17,6 +17,7 @@ const Home = () => {
         conversationId: null,
         prompt: ""
     });
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchGetConversationApi = async () => {
@@ -30,6 +31,7 @@ const Home = () => {
         if (!message.prompt.trim()) return;
 
         try {
+            setLoading(true)
             const res = await agentApi({
                 conversationId: message.conversationId,
                 prompt: message.prompt
@@ -37,6 +39,8 @@ const Home = () => {
             navigate(`/chat/${res.conversationId}`);
         } catch {
             console.log("Faild to send message")
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -123,7 +127,8 @@ const Home = () => {
 
                         <button
                             onClick={submitHandler}
-                            className="
+                            disabled={loading}
+                            className={`
                                 h-12
                                 w-12
                                 shrink-0
@@ -133,9 +138,12 @@ const Home = () => {
                                 text-[#FFFBF4]
                                 transition-all
                                 duration-300
-                                hover:bg-[#565449]
-                                hover:-translate-y-0.5
-                            "
+                                 ${loading
+                                    ? "cursor-not-allowed opacity-50"
+                                    : "hover:bg-[#565449]"
+                                }
+                        hover:-translate-y-0.5
+                        `}
                         >
                             →
                         </button>
@@ -160,8 +168,8 @@ const Home = () => {
                     </div>
 
                 </div>
-            </main>
-        </div>
+            </main >
+        </div >
     );
 };
 

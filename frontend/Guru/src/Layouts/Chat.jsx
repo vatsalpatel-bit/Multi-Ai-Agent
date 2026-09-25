@@ -12,7 +12,7 @@ import { setAllConversations } from "../redux/slices/chatSlice.js";
 
 const Chat = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
+    const [loading, setLoading] = useState(false);
     const [prompt, setPrompt] = useState("")
 
     const { id: conversationId } = useParams();
@@ -45,6 +45,7 @@ const Chat = () => {
         if (!prompt.trim()) return;
         const currentPrompt = prompt;
         try {
+            setLoading(true)
             dispatch(addMessage({
                 _id: crypto.randomUUID(),
                 role: 'user',
@@ -68,6 +69,8 @@ const Chat = () => {
             }))
         } catch {
             console.log("Faild to send message")
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -162,18 +165,22 @@ const Chat = () => {
                             {/* Send */}
                             <button
                                 onClick={submitHandler}
-                                className="
-                                    mb-1
-                                    flex h-10 w-10 shrink-0
-                                    items-center justify-center
-                                    rounded-[13px]
-                                    bg-[#11120D]
-                                    text-lg
-                                    text-[#FFFBF4]
-                                    transition
-                                    hover:bg-[#565449]
-                                    active:scale-95
-                                "
+                                disabled={loading}
+                                className={`
+        mb-1
+        flex h-10 w-10 shrink-0
+        items-center justify-center
+        rounded-[13px]
+        bg-[#11120D]
+        text-lg
+        text-[#FFFBF4]
+        transition
+        active:scale-95
+        ${loading
+                                        ? "cursor-not-allowed opacity-50"
+                                        : "hover:bg-[#565449]"
+                                    }
+    `}
                             >
                                 →
                             </button>

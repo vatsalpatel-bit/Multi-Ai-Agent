@@ -45,10 +45,14 @@ const chatSlice = createSlice({
         },
         removeConversation: (state, action) => {
             const { conversationId } = action.payload;
-            console.log(conversationId)
+
+            console.log("Deleting:", conversationId);
+
             state.allConversations = state.allConversations.filter(
-                con => con.conversationId?.toString() !== conversationId?.toString()
+                con => con._id?.toString() !== conversationId?.toString()
             );
+
+            console.log("After delete:", state.allConversations);
         }
     }
 });
