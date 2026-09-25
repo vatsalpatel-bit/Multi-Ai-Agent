@@ -9,12 +9,13 @@ import { addMessage, moveConversationOnTop, setAllMessages } from "../redux/slic
 import { agentApi } from "../Services/agentApi.js";
 import { getConversationApi } from "../Services/chatApi.js";
 import { setAllConversations } from "../redux/slices/chatSlice.js";
+import AgentSelector from "./AgentSelector.jsx";
 
 const Chat = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [selectedAgent, setSelectedAgent] = useState("Auto");
     const [loading, setLoading] = useState(false);
     const [prompt, setPrompt] = useState("")
-
     const { id: conversationId } = useParams();
     const dispatch = useDispatch();
 
@@ -29,7 +30,6 @@ const Chat = () => {
                 console.log("Faild to get message api")
             }
         }
-
         fetchGetMessagesApi();
     }, [conversationId, dispatch])
 
@@ -56,12 +56,11 @@ const Chat = () => {
 
             const res = await agentApi({
                 conversationId,
-                prompt: currentPrompt
+                prompt: currentPrompt,
+                agent: selectedAgent.trim().toLowerCase()
             });
-            console.log(res)
-            console.log("start")
+
             dispatch(moveConversationOnTop(conversationId));
-            console.log("end")
             dispatch(addMessage({
                 _id: crypto.randomUUID(),
                 role: 'assistant',
@@ -104,86 +103,91 @@ const Chat = () => {
                 </section>
 
                 {/* Input */}
-                <footer className="px-5 pb-5 pt-2">
-
-                    <div className="mx-auto w-full max-w-[700px]">
+                <footer className="px-5 pb-5 pt-3">
+                    <div className="mx-auto w-full max-w-[720px]">
 
                         <div
                             className="
-                                flex items-end gap-2
-                                rounded-[18px]
-                                border border-[#D8CFBC]/15
-                                bg-[#FFFBF4]
-                                p-1.5
-                                shadow-[0_12px_45px_rgba(0,0,0,0.35)]
-                            "
+                overflow-hidden
+                rounded-[22px]
+                border
+                border-[#D8CFBC]/20
+                bg-[#11120D]
+                shadow-[0_18px_50px_rgba(0,0,0,0.25)]
+                transition
+                focus-within:border-[#D8CFBC]/40
+            "
                         >
 
-                            {/* Add */}
-                            <button
-                                className="
-                                    mb-1 ml-1
-                                    flex h-9 w-9 shrink-0
-                                    items-center justify-center
-                                    rounded-xl
-                                    text-lg
-                                    text-[#565449]
-                                    transition
-                                    hover:bg-[#D8CFBC]/30
-                                "
-                            >
-                                +
-                            </button>
+                            {/* Agents */}
+                            <div className="overflow-x-auto px-3 pt-3 scrollbar-hide">
+                                <div className="flex min-w-max items-center gap-1.5">
+
+                                    <AgentSelector
+                                        selectedAgent={selectedAgent}
+                                        setSelectedAgent={setSelectedAgent}
+                                    />
+
+                                </div>
+                            </div>
+
 
                             {/* Input */}
-                            <textarea
-                                value={prompt}
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter" && !e.shiftKey) {
-                                        e.preventDefault();
-                                        submitHandler();
-                                    }
-                                }}
-                                onChange={(e) => setPrompt(e.target.value)}
-                                rows="1"
-                                placeholder="Message AI Agent..."
-                                className="
-                                    min-h-[44px]
-                                    max-h-[140px]
-                                    flex-1
-                                    resize-none
-                                    bg-transparent
-                                    px-2
-                                    py-3
-                                    text-sm
-                                    text-[#11120D]
-                                    outline-none
-                                    placeholder:text-[#777467]
-                                "
-                            />
+                            <div className="flex items-end gap-3 px-4 pb-3 pt-2">
 
-                            {/* Send */}
-                            <button
-                                onClick={submitHandler}
-                                disabled={loading}
-                                className={`
-        mb-1
-        flex h-10 w-10 shrink-0
-        items-center justify-center
-        rounded-[13px]
-        bg-[#11120D]
-        text-lg
-        text-[#FFFBF4]
-        transition
-        active:scale-95
-        ${loading
-                                        ? "cursor-not-allowed opacity-50"
-                                        : "hover:bg-[#565449]"
-                                    }
-    `}
-                            >
-                                →
-                            </button>
+                                <textarea
+                                    value={prompt}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" && !e.shiftKey) {
+                                            e.preventDefault();
+                                            submitHandler();
+                                        }
+                                    }}
+                                    onChange={(e) => setPrompt(e.target.value)}
+                                    rows="1"
+                                    placeholder="Message AI Agent..."
+                                    className="
+                        min-h-[46px]
+                        max-h-[140px]
+                        flex-1
+                        resize-none
+                        bg-transparent
+                        px-1
+                        py-3
+                        text-[15px]
+                        leading-6
+                        text-[#FFFBF4]
+                        outline-none
+                        placeholder:text-[#D8CFBC]/40
+                    "
+                                />
+
+                                <button
+                                    onClick={submitHandler}
+                                    disabled={loading}
+                                    className={`
+                        flex
+                        h-10
+                        w-10
+                        shrink-0
+                        items-center
+                        justify-center
+                        rounded-full
+                        bg-[#D8CFBC]
+                        text-[18px]
+                        text-[#11120D]
+                        transition-all
+                        duration-200
+                        ${loading
+                                            ? "cursor-not-allowed opacity-40"
+                                            : "hover:bg-[#FFFBF4] hover:scale-105"
+                                        }
+                    `}
+                                >
+                                    →
+                                </button>
+
+                            </div>
 
                         </div>
 
@@ -192,7 +196,6 @@ const Chat = () => {
                         </p>
 
                     </div>
-
                 </footer>
 
             </main>

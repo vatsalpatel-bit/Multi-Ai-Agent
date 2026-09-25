@@ -5,7 +5,8 @@ import redis from "../../../shared/redis/redis.js";
 
 export const agentApi = async (req, res) => {
     try {
-        const { conversationId, prompt } = req.body;
+        const { conversationId, prompt, agent } = req.body;
+
         if (!prompt || !prompt.trim()) {
             return res.status(400).json({
                 success: false,
@@ -52,7 +53,9 @@ export const agentApi = async (req, res) => {
             conversationId: currentConversationId,
             prompt: prompt.trim(),
             userId,
+            agent: agent
         });
+
         const response = typeof result.aiResponse === "string"
             ? result.aiResponse.trim()
             : "";

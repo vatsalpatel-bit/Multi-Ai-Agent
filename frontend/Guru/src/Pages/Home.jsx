@@ -6,13 +6,15 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getConversationApi } from "../Services/chatApi.js";
 import { setAllConversations } from "../redux/slices/chatSlice.js";
-
+import AgentSelector from "../Layouts/AgentSelector.jsx";
 
 const Home = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [selectedAgent, setSelectedAgent] = useState("Auto");
+    console.log(selectedAgent)
     const [message, setMessage] = useState({
         conversationId: null,
         prompt: ""
@@ -34,7 +36,8 @@ const Home = () => {
             setLoading(true)
             const res = await agentApi({
                 conversationId: message.conversationId,
-                prompt: message.prompt
+                prompt: message.prompt,
+                agent: selectedAgent.trim().toLowerCase()
             });
             navigate(`/chat/${res.conversationId}`);
         } catch {
@@ -94,60 +97,92 @@ const Home = () => {
                     </p>
 
                     {/* Chat Bar */}
-                    <div className="mx-auto flex w-full max-w-[720px] items-end gap-2 rounded-[22px] bg-[#FFFBF4] p-2 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
+                    <div
+                        className="
+        mx-auto
+        w-full
+        max-w-[720px]
+        overflow-hidden
+        rounded-[22px]
+        border
+        border-[#D8CFBC]/20
+        bg-[#11120D]
+        text-left
+        shadow-[0_18px_50px_rgba(0,0,0,0.3)]
+        transition
+        focus-within:border-[#D8CFBC]/40
+    "
+                    >
+                        {/* Agents */}
+                        <div className="overflow-x-auto px-3 pt-3 scrollbar-hide">
+                            <AgentSelector
+                                selectedAgent={selectedAgent}
+                                setSelectedAgent={setSelectedAgent}
+                            />
+                        </div>
 
-                        <textarea
-                            value={message.prompt}
-                            onChange={(e) => setMessage((prev) => ({
-                                ...prev,
-                                prompt: e.target.value
-                            }))}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter" && !e.shiftKey) {
-                                    e.preventDefault();
-                                    submitHandler();
+                        {/* Input Row */}
+                        <div className="flex items-end gap-3 px-4 pb-3 pt-2">
+
+                            <textarea
+                                value={message.prompt}
+                                onChange={(e) =>
+                                    setMessage((prev) => ({
+                                        ...prev,
+                                        prompt: e.target.value,
+                                    }))
                                 }
-                            }}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" && !e.shiftKey) {
+                                        e.preventDefault();
+                                        submitHandler();
+                                    }
+                                }}
+                                rows="1"
+                                placeholder="Ask your AI agent anything..."
+                                className="
+                min-h-[48px]
+                max-h-[140px]
+                flex-1
+                resize-none
+                bg-transparent
+                px-1
+                py-3
+                text-[15px]
+                leading-6
+                text-[#FFFBF4]
+                outline-none
+                placeholder:text-[#D8CFBC]/40
+            "
+                            />
 
-                            rows="1"
-                            placeholder="Ask your AI agent anything..."
-                            className="
-                                min-h-[52px]
-                                flex-1
-                                resize-none
-                                bg-transparent
-                                px-[15px]
-                                py-4
-                                text-[15px]
-                                text-[#11120D]
-                                outline-none
-                                placeholder:text-[#777467]
-                            "
-                        />
+                            <button
+                                onClick={submitHandler}
+                                disabled={loading}
+                                className={`
+                mb-1
+                flex
+                h-10
+                w-10
+                shrink-0
+                items-center
+                justify-center
+                rounded-full
+                bg-[#D8CFBC]
+                text-lg
+                text-[#11120D]
+                transition-all
+                duration-200
+                ${loading
+                                        ? "cursor-not-allowed opacity-40"
+                                        : "hover:bg-[#FFFBF4] hover:scale-105"
+                                    }
+            `}
+                            >
+                                →
+                            </button>
 
-                        <button
-                            onClick={submitHandler}
-                            disabled={loading}
-                            className={`
-                                h-12
-                                w-12
-                                shrink-0
-                                rounded-[15px]
-                                bg-[#11120D]
-                                text-[23px]
-                                text-[#FFFBF4]
-                                transition-all
-                                duration-300
-                                 ${loading
-                                    ? "cursor-not-allowed opacity-50"
-                                    : "hover:bg-[#565449]"
-                                }
-                        hover:-translate-y-0.5
-                        `}
-                        >
-                            →
-                        </button>
-
+                        </div>
                     </div>
 
                     {/* Suggestions */}
