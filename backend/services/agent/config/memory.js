@@ -5,17 +5,17 @@ export const getMemory = async (userId) => {
 
     const key = `messages-${userId}`;
     const cached = await redis.get(key);
-    
+
     if (cached) {
         return JSON.parse(cached);
     };
 
     const messages = await getUserMessagesApi(userId);
-    
-    const recentMessages = messages.slice(-50);
-    
+
+    const recentMessages = messages.slice(-20);
+
     await redis.set(key, JSON.stringify(recentMessages), "EX", 24 * 60 * 60);
-    
+
     return recentMessages;
 };
 
@@ -28,7 +28,7 @@ export const addMessage = async ({ conversationId, userId, role, content }) => {
         conversationId, role, content
     });
 
-    if (messages.length > 50) {
+    if (messages.length > 20) {
         messages.shift();
     };
 

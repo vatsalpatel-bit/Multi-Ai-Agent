@@ -10,7 +10,6 @@ const groq = new ChatGroq({
 
 const gemini = new ChatGoogleGenerativeAI({
     model: "gemini-pro",
-    maxOutputTokens: 2048,
 });
 
 

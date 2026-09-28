@@ -1,11 +1,16 @@
-import { AIMessage, HumanMessage } from "@langchain/core/messages";
-import { getAgent } from "../config/llmModels.js"
+import {
+    AIMessage,
+    HumanMessage,
+    SystemMessage
+} from "@langchain/core/messages";
+
+import { getAgent } from "../config/llmModels.js";
 import { getMemory } from "../config/memory.js";
 
 export const chatAgent = async (state) => {
 
     const llm = getAgent("chat");
-    
+
     const systemPrompt = `
 You are guruAI, an intelligent, helpful, and professional AI assistant.
 
@@ -50,29 +55,65 @@ When providing code:
 - Never invent information.
 - If you are uncertain, clearly say so.
 - Do not claim to have done something you did not do.
+- If search results are provided, use them as the primary source for factual information.
+- Do not contradict reliable search results using unsupported assumptions.
+- If search results do not contain enough information, clearly say so.
 
 Always prioritize clarity, natural conversation, and readability.
 `;
+
+    let contextPrompt = `
+User question:
+${state.prompt}
+`;
+
+    if (state.searchResults?.length) {
+
+        contextPrompt += `
+
+Search results:
+${state.searchResults
+                .slice(0, 3)
+                .map(
+                    (result, index) => `
+[Source ${index + 1}]
+Title: ${result.title}
+URL: ${result.url}
+Content: ${result.content?.slice(0, 1500)}
+`
+                )
+                .join("\n")}`;
+    }
+
     const history = await getMemory(state.userId);
+
     const messages = [
-        new AIMessage(systemPrompt)
+        new SystemMessage(systemPrompt)
     ];
 
-    history.forEach(msg => {
+    history.forEach((msg) => {
+
         if (msg.role === "user") {
-            messages.push(new HumanMessage(msg.content))
+            messages.push(
+                new HumanMessage(msg.content)
+            );
         }
+
         if (msg.role === "assistant") {
-            messages.push(new AIMessage(msg.content))
+            messages.push(
+                new AIMessage(msg.content)
+            );
         }
     });
 
-    messages.push(new HumanMessage(state.prompt))
-
+    messages.push(
+        new HumanMessage(contextPrompt)
+    );
+    
     const response = await llm.invoke(messages);
+
     return {
         ...state,
         aiResponse: response.content
-    }
-}
-
+    };
+};

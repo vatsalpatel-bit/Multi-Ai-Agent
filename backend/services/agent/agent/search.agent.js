@@ -7,9 +7,9 @@ export const searchAgent = async (state) => {
         });
         return {
             ...state,
-            searchResults: results,
-            searchImages: results.images
-        }
+            searchResults: results.results,
+            searchImages: results.images || []
+        };
     } catch (error) {
         return {
             ...state,
