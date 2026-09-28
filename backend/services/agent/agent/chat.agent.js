@@ -3,7 +3,9 @@ import { getAgent } from "../config/llmModels.js"
 import { getMemory } from "../config/memory.js";
 
 export const chatAgent = async (state) => {
+
     const llm = getAgent("chat");
+    
     const systemPrompt = `
 You are guruAI, an intelligent, helpful, and professional AI assistant.
 
