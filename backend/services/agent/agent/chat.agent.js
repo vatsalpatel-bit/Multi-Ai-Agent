@@ -10,7 +10,7 @@ import { getMemory } from "../config/memory.js";
 export const chatAgent = async (state) => {
 
     const llm = getAgent("chat");
-
+    // console.log(state.searchImages)
     const systemPrompt = `
 You are guruAI, an intelligent, helpful, and professional AI assistant.
 
@@ -91,7 +91,7 @@ Content: ${result.content?.slice(0, 1500)}
         new SystemMessage(systemPrompt)
     ];
 
-    history.forEach((msg) => {
+    history?.forEach((msg) => {
 
         if (msg.role === "user") {
             messages.push(
@@ -109,11 +109,14 @@ Content: ${result.content?.slice(0, 1500)}
     messages.push(
         new HumanMessage(contextPrompt)
     );
-    
+
     const response = await llm.invoke(messages);
 
+    const images = state?.searchImages
+    
     return {
         ...state,
-        aiResponse: response.content
+        aiResponse: response.content,
+        searchImages: images
     };
 };

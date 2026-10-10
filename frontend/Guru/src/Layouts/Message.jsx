@@ -2,7 +2,7 @@ import Markdown from "react-markdown";
 
 const Message = ({ role, content }) => {
     const isUser = role === "user";
-
+    // console.log(content)
     return (
         <div
             className={`

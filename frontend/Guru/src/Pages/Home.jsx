@@ -14,7 +14,7 @@ const Home = () => {
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [selectedAgent, setSelectedAgent] = useState("Auto");
-    console.log(selectedAgent)
+    // console.log(selectedAgent)
     const [message, setMessage] = useState({
         conversationId: null,
         prompt: ""
@@ -186,7 +186,7 @@ const Home = () => {
                     </div>
 
                     {/* Suggestions */}
-                    <div className="mt-[18px] flex flex-wrap justify-center gap-2">
+                    {/* <div className="mt-[18px] flex flex-wrap justify-center gap-2">
 
                         <button className="rounded-full border border-[#D8CFBC]/20 bg-[#565449]/25 px-3.5 py-2 text-xs text-[#D8CFBC] transition hover:bg-[#565449] hover:text-[#FFFBF4]">
                             Explain something
@@ -200,7 +200,7 @@ const Home = () => {
                             Analyze data
                         </button>
 
-                    </div>
+                    </div> */}
 
                 </div>
             </main >

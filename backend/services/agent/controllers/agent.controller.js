@@ -36,7 +36,6 @@ export const agentApi = async (req, res) => {
             currentConversationId = conversationRes.data._id;
 
         }
-
         // Save user message
         await axios.post(
             `${process.env.CHAT_SERVICE_URL}/api/v1/chat/m`,
@@ -55,11 +54,12 @@ export const agentApi = async (req, res) => {
             userId,
             agent: agent
         });
-
+        // console.log(result)
         const response = typeof result.aiResponse === "string"
             ? result.aiResponse.trim()
             : "";
-
+        const images = result?.searchImages
+        // console.log(images)
         if (!response) {
             throw new Error("The selected agent did not produce a response");
         }
@@ -74,7 +74,6 @@ export const agentApi = async (req, res) => {
             },
             { headers: chatServiceHeaders }
         );
-
         await addMessage({
             conversationId: currentConversationId,
             userId,
@@ -91,7 +90,8 @@ export const agentApi = async (req, res) => {
         return res.status(200).json({
             success: true,
             conversationId: currentConversationId,
-            response
+            response,
+            ...(images?.length > 0 && { images })
         });
 
     } catch (error) {

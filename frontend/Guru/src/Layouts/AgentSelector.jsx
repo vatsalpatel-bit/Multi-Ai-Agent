@@ -1,10 +1,10 @@
 const agents = [
     { name: "Auto", icon: "✦" },
     { name: "Chat", icon: "□" },
-    { name: "Coding", icon: "</>" },
-    { name: "PDF", icon: "▤" },
-    { name: "PPT", icon: "▱" },
-    { name: "Image", icon: "▧" },
+    // { name: "Coding", icon: "</>" },
+    // { name: "PDF", icon: "▤" },
+    // { name: "PPT", icon: "▱" },
+    // { name: "Image", icon: "▧" },
     { name: "Search", icon: "◎" },
 ];
 

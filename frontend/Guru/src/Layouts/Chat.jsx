@@ -19,8 +19,8 @@ const Chat = () => {
     const { id: conversationId } = useParams();
     const dispatch = useDispatch();
 
-    const messages = useSelector((state) => state.chat.allMessages);
-
+    const messages = useSelector((state) => state.chat?.allMessages);
+    console.log(messages)
     useEffect(() => {
         const fetchGetMessagesApi = async () => {
             try {
@@ -59,7 +59,7 @@ const Chat = () => {
                 prompt: currentPrompt,
                 agent: selectedAgent.trim().toLowerCase()
             });
-
+            console.log(res)
             dispatch(moveConversationOnTop(conversationId));
             dispatch(addMessage({
                 _id: crypto.randomUUID(),

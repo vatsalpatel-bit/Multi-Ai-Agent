@@ -26,7 +26,7 @@ export const saveConversationApi = async (req, res) => {
         }
 
         const generatedTitle = await genTitleAgent(message);
-        const title = generatedTitle.trim() ?? "New chat";
+        const title = generatedTitle?.trim() ?? "New chat";
 
         const conversation = await Conversation.create({
             title,
@@ -49,10 +49,8 @@ export const saveConversationApi = async (req, res) => {
 export const getConversationsApi = async (req, res) => {
     try {
 
-
         const userId = req.headers["x-user-id"];
         const userType = req.headers["x-user-type"];
-
 
         if (!userId || !userType) {
             return res.status(401).json({
@@ -60,7 +58,7 @@ export const getConversationsApi = async (req, res) => {
                 message: "User identity is required"
             });
         }
-
+        
         const conversations = await Conversation
             .find({
                 userId,

@@ -11,8 +11,12 @@ export const getMemory = async (userId) => {
     };
 
     const messages = await getUserMessagesApi(userId);
+    
+    if (!messages || messages?.length === 0) {
+        return;
+    }
 
-    const recentMessages = messages.slice(-20);
+    const recentMessages = messages?.slice(-20);
 
     await redis.set(key, JSON.stringify(recentMessages), "EX", 24 * 60 * 60);
 
