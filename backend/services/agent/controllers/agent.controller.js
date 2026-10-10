@@ -70,7 +70,8 @@ export const agentApi = async (req, res) => {
             {
                 conversationId: currentConversationId,
                 role: "assistant",
-                content: response
+                content: response,
+                images: images?.length ? images : []
             },
             { headers: chatServiceHeaders }
         );

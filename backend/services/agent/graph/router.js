@@ -1,7 +1,7 @@
 import { getAgent } from "../config/llmModels.js"
 
 export const router = async (state) => {
-    console.log(state.agent)
+
     if (state.agent && state.agent !== "auto") {
         return {
             ...state,

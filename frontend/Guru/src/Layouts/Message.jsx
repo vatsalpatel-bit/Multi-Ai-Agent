@@ -1,6 +1,6 @@
 import Markdown from "react-markdown";
 
-const Message = ({ role, content }) => {
+const Message = ({ role, content, images }) => {
     const isUser = role === "user";
     // console.log(content)
     return (
@@ -55,7 +55,20 @@ const Message = ({ role, content }) => {
                         {content}
                     </Markdown>
                 </div>
-
+                {/* Show images */}
+                {images?.length > 0 && (
+                    <div className="flex flex-wrap gap-3 mt-3">
+                        {images.map((image, index) => (
+                            <img
+                                key={index}
+                                src={typeof image === "string" ? image : image.url}
+                                alt={`Image ${index + 1}`}
+                                onError={(e) => e.currentTarget.remove()}
+                                className="w-40 rounded-lg object-cover"
+                            />
+                        ))}
+                    </div>
+                )}
                 {!isUser && (
                     <div className="mt-3 flex items-center gap-1">
                         <button

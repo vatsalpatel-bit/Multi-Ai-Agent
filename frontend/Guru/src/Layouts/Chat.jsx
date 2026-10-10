@@ -59,12 +59,13 @@ const Chat = () => {
                 prompt: currentPrompt,
                 agent: selectedAgent.trim().toLowerCase()
             });
-            console.log(res)
+
             dispatch(moveConversationOnTop(conversationId));
             dispatch(addMessage({
                 _id: crypto.randomUUID(),
                 role: 'assistant',
-                content: res.response
+                content: res.response,
+                ...(res?.images?.length > 0 && { images: res?.images })
             }))
         } catch {
             console.log("Faild to send message")
@@ -94,7 +95,8 @@ const Chat = () => {
                             <Message
                                 key={message._id}
                                 role={message.role}
-                                content={message.content}
+                                content={message?.content}
+                                images={message?.images}
                             />
                         ))}
 

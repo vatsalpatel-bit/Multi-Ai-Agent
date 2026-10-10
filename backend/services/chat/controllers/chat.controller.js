@@ -58,7 +58,7 @@ export const getConversationsApi = async (req, res) => {
                 message: "User identity is required"
             });
         }
-        
+
         const conversations = await Conversation
             .find({
                 userId,
@@ -188,12 +188,13 @@ export const saveMessageApi = async (req, res) => {
         const userId = req.headers["x-user-id"];
         const userType = req.headers["x-user-type"];
 
-        const { conversationId, role, content } = req.body;
+        const { conversationId, role, content, images } = req.body;
 
         const message = await Message.create({
             conversationId,
             role,
             content,
+            images,
             userId,
             userType
         });
