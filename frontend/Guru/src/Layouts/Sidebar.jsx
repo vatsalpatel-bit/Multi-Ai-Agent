@@ -72,8 +72,7 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
   };
 
   const delConversationHandle = async (conversationId) => {
-    const res = await deleteConversationApi(conversationId);
-    console.log(res)
+    await deleteConversationApi(conversationId);
     navigate("/");
     dispatch(removeConversation({ conversationId }))
 
