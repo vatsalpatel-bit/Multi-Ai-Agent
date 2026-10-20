@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import Markdown from "react-markdown";
 import { X } from "lucide-react";
 import remarkGfm from "remark-gfm"
+import CodeBlock from "./CodeBlock";
 
 const Message = ({ role, content, images }) => {
     const [lightBox, setLightBox] = useState(null);
+    const [isCopy, setIsCopy] = useState(false);
     const isUser = role === "user";
 
     useEffect(() => {
@@ -19,6 +21,19 @@ const Message = ({ role, content, images }) => {
             window.removeEventListener("keydown", handleKeyDown)
         }
     }, [lightBox])
+    
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(content);
+            setIsCopy(true);
+            setTimeout(() => {
+                setIsCopy(false);
+            }, 2000)
+        } catch {
+            console.log("Faild to do copy")
+        }
+    }
+
     return (
         <div
             className={`
@@ -135,6 +150,34 @@ const Message = ({ role, content, images }) => {
                                     {children}
                                 </a>
                             ),
+                            pre: ({ children }) => {
+                                const child = children?.props;
+
+                                return (
+                                    <CodeBlock className={child?.className}>
+                                        {child?.children}
+                                    </CodeBlock>
+                                );
+                            },
+
+                            code: ({ children, className }) => {
+                                const isBlock = className?.startsWith("language-");
+
+                                if (isBlock) {
+                                    return (
+                                        <code className={className}>
+                                            {children}
+                                        </code>
+                                    );
+                                }
+
+                                return (
+                                    <code className="rounded bg-white/10 px-1.5 py-0.5 text-sm text-blue-300">
+                                        {children}
+                                    </code>
+                                );
+                            },
+
                         }}
                     >
                         {content}
@@ -158,6 +201,7 @@ const Message = ({ role, content, images }) => {
                 {!isUser && (
                     <div className="mt-3 flex items-center gap-1">
                         <button
+                            onClick={handleCopy}
                             className="
                                 rounded-lg
                                 px-2.5 py-1.5
@@ -168,10 +212,10 @@ const Message = ({ role, content, images }) => {
                                 hover:text-[#D8CFBC]
                             "
                         >
-                            Copy
+                            {isCopy ? "Copied!" : "Copy"}
                         </button>
 
-                        <button
+                        {/* <button
                             className="
                                 rounded-lg
                                 px-2.5 py-1.5
@@ -183,7 +227,7 @@ const Message = ({ role, content, images }) => {
                             "
                         >
                             Regenerate
-                        </button>
+                        </button> */}
                     </div>
                 )}
             </div>
