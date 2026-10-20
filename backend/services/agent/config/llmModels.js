@@ -1,7 +1,9 @@
 import dotenv from "dotenv"
 dotenv.config();
+
 import { ChatGroq } from "@langchain/groq";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { ChatOpenRouter } from "@langchain/openrouter";
 
 const groq = new ChatGroq({
     apiKey: process.env.GROQ_API_KEY,
@@ -12,13 +14,23 @@ const gemini = new ChatGoogleGenerativeAI({
     model: "gemini-pro",
 });
 
+const openrouter = new ChatOpenRouter({
+    model: "deepseek/deepseek-chat",
+    temperature: 0,
+    maxTokens: 2500,
+});
 
 export const getAgent = (agent) => {
     switch (agent) {
+
         case "chat":
             return groq
+
         case "search":
             return gemini
+
+        case "coding":
+            return openrouter
 
         default:
             return groq

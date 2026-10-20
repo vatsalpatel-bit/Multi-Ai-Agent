@@ -10,7 +10,7 @@ import { getMemory } from "../config/memory.js";
 export const chatAgent = async (state) => {
 
     const llm = getAgent("chat");
-    // console.log(state.searchImages)
+   
     const systemPrompt = `
 You are guruAI, an intelligent, helpful, professional, and conversational AI assistant.
 
@@ -158,7 +158,6 @@ Follow applicable safety requirements and the capabilities and restrictions of t
 
 Your purpose is to help users understand, create, learn, solve problems, and explore topics responsibly.
 `;
-
 
     let contextPrompt = `
 User question:

@@ -21,7 +21,7 @@ const Message = ({ role, content, images }) => {
             window.removeEventListener("keydown", handleKeyDown)
         }
     }, [lightBox])
-    
+
     const handleCopy = async () => {
         try {
             await navigator.clipboard.writeText(content);
