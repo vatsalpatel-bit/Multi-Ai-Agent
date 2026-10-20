@@ -188,13 +188,14 @@ export const saveMessageApi = async (req, res) => {
         const userId = req.headers["x-user-id"];
         const userType = req.headers["x-user-type"];
 
-        const { conversationId, role, content, images } = req.body;
+        const { conversationId, role, content, images, artifacts } = req.body;
 
         const message = await Message.create({
             conversationId,
             role,
             content,
             images,
+            artifacts,
             userId,
             userType
         });

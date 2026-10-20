@@ -34,11 +34,15 @@ const Chat = () => {
     }, [conversationId, dispatch])
 
     useEffect(() => {
-        const fetchGetConversationApi = async () => {
-            const res = await getConversationApi();
-            dispatch(setAllConversations(res.conversations))
-        }
-        fetchGetConversationApi();
+        const fetchConversations = async () => {
+            try {
+                const res = await getConversationApi();
+                dispatch(setAllConversations(res.conversations));
+            } catch (error) {
+                console.error("Failed to fetch conversations:", error);
+            }
+        };
+        fetchConversations();
     }, [dispatch]);
 
     const submitHandler = async () => {

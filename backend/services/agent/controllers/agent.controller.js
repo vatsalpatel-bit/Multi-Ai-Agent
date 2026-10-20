@@ -71,7 +71,8 @@ export const agentApi = async (req, res) => {
                 conversationId: currentConversationId,
                 role: "assistant",
                 content: response,
-                images: images?.length ? images : []
+                images: images?.length ? images : [],
+                artifacts: result?.artifacts
             },
             { headers: chatServiceHeaders }
         );
@@ -86,13 +87,16 @@ export const agentApi = async (req, res) => {
             conversationId: currentConversationId,
             userId,
             role: "assistant",
-            content: response
+            content: response,
+
         });
+        // console.log(result.artifacts)
         return res.status(200).json({
             success: true,
             conversationId: currentConversationId,
             response,
-            ...(images?.length > 0 && { images })
+            ...(images?.length > 0 && { images }),
+            artifacts: result.artifacts
         });
 
     } catch (error) {

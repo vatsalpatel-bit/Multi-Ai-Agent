@@ -1,7 +1,7 @@
 const agents = [
     { name: "Auto", icon: "✦" },
     { name: "Chat", icon: "□" },
-    // { name: "Coding", icon: "</>" },
+    { name: "Coding", icon: "</>" },
     // { name: "PDF", icon: "▤" },
     // { name: "PPT", icon: "▱" },
     // { name: "Image", icon: "▧" },
@@ -33,14 +33,13 @@ const AgentSelector = ({
                             font-medium
                             transition-all
                             duration-200
-                            ${
-                                active
-                                    ? `
+                            ${active
+                                ? `
                                         bg-[#D8CFBC]
                                         text-[#11120D]
                                         shadow-[0_3px_12px_rgba(216,207,188,0.12)]
                                       `
-                                    : `
+                                : `
                                         bg-[#565449]/20
                                         text-[#D8CFBC]/65
                                         hover:bg-[#565449]/40
