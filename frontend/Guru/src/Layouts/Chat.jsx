@@ -31,7 +31,7 @@ const Chat = () => {
     const [prompt, setPrompt] = useState("")
     const { id: conversationId } = useParams();
     const dispatch = useDispatch();
-
+   
     const messages = useSelector((state) => state.chat?.allMessages);
     const {
         artifacts,
@@ -127,7 +127,7 @@ const Chat = () => {
             const res = await agentApi({
                 conversationId,
                 prompt: currentPrompt,
-                agent: selectedAgent.trim().toLowerCase(),
+                agent: selectedAgent,
             });
 
             if (res.artifacts?.length > 0) {

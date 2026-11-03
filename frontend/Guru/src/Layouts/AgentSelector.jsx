@@ -1,27 +1,28 @@
 const agents = [
-    { name: "Auto", icon: "✦" },
-    { name: "Chat", icon: "□" },
-    { name: "Coding", icon: "</>" },
-    // { name: "PDF", icon: "▤" },
-    // { name: "PPT", icon: "▱" },
-    // { name: "Image", icon: "▧" },
-    { name: "Search", icon: "◎" },
+    { name: "Auto", icon: "✦", value: "Auto" },
+    { name: "Chat", icon: "□", value: "chat" },
+    { name: "Coding", icon: "</>", value: "coding" },
+    // { name: "PDF", icon: "▤" ,value: "pdf"},
+    // { name: "PPT", icon: "▱" ,value: "ppt"},
+    { name: "Image", icon: "▧", value: "imageGen" },
+    { name: "Search", icon: "◎", value: "search" },
 ];
 
 const AgentSelector = ({
     selectedAgent,
     setSelectedAgent,
 }) => {
+
     return (
         <div className="flex min-w-max items-center gap-1.5">
 
             {agents.map((agent) => {
-                const active = selectedAgent === agent.name;
+                const active = selectedAgent === agent.value;
 
                 return (
                     <button
                         key={agent.name}
-                        onClick={() => setSelectedAgent(agent.name)}
+                        onClick={() => setSelectedAgent(agent.value)}
                         className={`
                             flex
                             h-9

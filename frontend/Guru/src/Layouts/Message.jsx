@@ -139,6 +139,26 @@ const Message = ({ role, content, images }) => {
                                     {children}
                                 </td>
                             ),
+                            img: ({ src, alt }) => (
+                                <div className="my-4 overflow-hidden rounded-xl border border-white/10">
+                                    <img
+                                        src={src}
+                                        alt={alt || "Generated Image"}
+                                        loading="lazy"
+                                        className="
+                w-full
+                h-auto
+                max-h-[600px]
+                object-contain
+                rounded-xl
+                cursor-pointer
+                transition-transform
+                duration-300
+                hover:scale-[1.02]
+            "
+                                    />
+                                </div>
+                            ),
 
                             a: ({ children, href }) => (
                                 <a

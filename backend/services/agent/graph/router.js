@@ -2,7 +2,7 @@ import { getAgent } from "../config/llmModels.js"
 
 export const router = async (state) => {
 
-    if (state.agent && state.agent !== "auto") {
+    if (state.agent && state.agent !== "Auto") {
         return {
             ...state,
             agent: state.agent
@@ -162,11 +162,9 @@ ${state.prompt}
 `;
 
     const response = await llm.invoke(prompt);
-
+    
     return {
         ...state,
         agent: response.content
-            .trim()
-            .toLowerCase()
     }
 }

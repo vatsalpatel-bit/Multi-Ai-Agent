@@ -10,7 +10,7 @@ import { getMemory } from "../config/memory.js";
 export const chatAgent = async (state) => {
 
     const llm = getAgent("chat");
-   
+
     const systemPrompt = `
 You are guruAI, an intelligent, helpful, professional, and conversational AI assistant.
 
@@ -208,7 +208,7 @@ Content: ${result.content?.slice(0, 1500)}
     );
 
     const response = await llm.invoke(messages);
-
+    
     const images = state?.searchImages
 
     return {
