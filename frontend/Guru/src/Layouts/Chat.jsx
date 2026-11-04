@@ -31,14 +31,16 @@ const Chat = () => {
     const [prompt, setPrompt] = useState("")
     const { id: conversationId } = useParams();
     const dispatch = useDispatch();
-   
+
     const messages = useSelector((state) => state.chat?.allMessages);
     const {
         artifacts,
         activeArtifactId,
         isOpen,
     } = useSelector((state) => state.artifact);
-
+    console.log(artifacts,
+        activeArtifactId,
+        isOpen,)
     const activeArtifact =
         artifacts.find((item) => item.id === activeArtifactId) ??
         artifacts.at(-1);

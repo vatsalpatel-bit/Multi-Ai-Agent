@@ -1,7 +1,7 @@
 import { getAgent } from "../config/llmModels.js"
 
 export const router = async (state) => {
-
+    // console.log(state.agent)
     if (state.agent && state.agent !== "Auto") {
         return {
             ...state,
@@ -162,7 +162,7 @@ ${state.prompt}
 `;
 
     const response = await llm.invoke(prompt);
-    
+    console.log(response.content)
     return {
         ...state,
         agent: response.content

@@ -6,7 +6,7 @@ import redis from "../../../shared/redis/redis.js";
 export const agentApi = async (req, res) => {
     try {
         const { conversationId, prompt, agent } = req.body;
-        console.log(agent)
+        // console.log(agent)
         if (!prompt || !prompt.trim()) {
             return res.status(400).json({
                 success: false,

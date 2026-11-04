@@ -1,4 +1,10 @@
-import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
+
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const s3Client = new S3Client({
@@ -9,24 +15,62 @@ const s3Client = new S3Client({
   },
 });
 
-export async function uploadBufferToS3(fileBuffer, fileName, contentType) {
-  const uploadParams = {
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Key: fileName,
-    Body: fileBuffer,
-    ContentType: contentType
-  };
-
+export async function uploadBufferToS3(
+  fileBuffer,
+  fileName,
+  contentType
+) {
   try {
-    await s3Client.send(new PutObjectCommand(uploadParams));
+    if (!Buffer.isBuffer(fileBuffer)) {
+      throw new Error("Invalid file buffer");
+    }
 
-    const command = new GetObjectCommand({ Bucket: process.env.AWS_BUCKET_NAME, Key: fileName });
-    const presignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+    if (!fileBuffer.length) {
+      throw new Error("File buffer is empty");
+    }
+
+    const bucket = process.env.AWS_BUCKET_NAME;
+
+    if (!bucket) {
+      throw new Error("AWS bucket name is missing");
+    }
+
+    const uploadParams = {
+      Bucket: bucket,
+      Key: fileName,
+      Body: fileBuffer,
+      ContentType: contentType,
+      ContentLength: fileBuffer.length,
+    };
+
+    await s3Client.send(
+      new PutObjectCommand(uploadParams)
+    );
+
+    const command = new GetObjectCommand({
+      Bucket: bucket,
+      Key: fileName,
+    });
+
+    const presignedUrl = await getSignedUrl(
+      s3Client,
+      command,
+      {
+        expiresIn: 3600,
+      }
+    );
 
     return presignedUrl;
 
   } catch (err) {
-    console.error("Error uploading buffer to S3:", err);
+    console.error("S3 Upload Error:", {
+      name: err.name,
+      message: err.message,
+      code: err.Code,
+      statusCode: err.$metadata?.httpStatusCode,
+      requestId: err.$metadata?.requestId,
+    });
+
     throw err;
   }
 }
