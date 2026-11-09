@@ -1,3 +1,6 @@
+
+import { Link } from "react-router-dom";
+
 const UserMenu = ({ user, onLogout }) => {
   return (
     <div
@@ -20,17 +23,10 @@ const UserMenu = ({ user, onLogout }) => {
 
         <div
           className="
-            flex
-            h-10
-            w-10
-            shrink-0
-            items-center
-            justify-center
-            rounded-full
-            bg-[#F28B82]
-            text-xs
-            font-medium
-            text-white
+            flex h-10 w-10 shrink-0
+            items-center justify-center
+            rounded-full bg-[#F28B82]
+            text-xs font-medium text-white
           "
         >
           {user?.name
@@ -39,11 +35,9 @@ const UserMenu = ({ user, onLogout }) => {
         </div>
 
         <div className="min-w-0 flex-1 text-left">
-
           <p className="truncate text-sm font-medium text-[#FFFBF4]">
             {user?.name || "vatsal patel"}
           </p>
-          
         </div>
 
         <span className="text-xl text-[#D8CFBC]">
@@ -55,6 +49,18 @@ const UserMenu = ({ user, onLogout }) => {
       {/* Divider */}
       <div className="my-3 h-px bg-[#D8CFBC]/15" />
 
+      {/* Plans */}
+      <Link
+        to="/plans"
+        className="
+          menu-item
+          text-[#FFFBF4]
+          hover:bg-[#565449]/50
+        "
+      >
+        <span className="menu-icon">✧</span>
+        Plans
+      </Link>
 
       {/* Logout */}
       <button
