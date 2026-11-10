@@ -327,11 +327,13 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
         </div>
 
 
+
         {/* Bottom Section */}
         <div className="relative mt-auto shrink-0 pt-4">
 
           {user ? (
             <>
+
               {/* User Popup */}
               {showUserMenu && (
                 <UserMenu
@@ -339,6 +341,107 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
                   onLogout={logoutHandle}
                 />
               )}
+
+              {/* Remaining Token Bar */}
+              <button
+                onClick={() => navigate("/plan-status")}
+                className="
+          group
+          mb-3
+          w-full
+          rounded-xl
+          border
+          border-[#D8CFBC]/15
+          bg-[#565449]/20
+          p-3
+          text-left
+          transition-all
+          duration-300
+          hover:border-[#D8CFBC]/40
+          hover:bg-[#565449]/35
+        "
+              >
+
+                {(() => {
+                  const remaining = user?.remainingTokens ?? 0;
+                  const total = user?.totalTokens ?? 1000;
+
+                  const percentage =
+                    total > 0
+                      ? Math.min(100, Math.max(0, (remaining / total) * 100))
+                      : 0;
+
+                  return (
+                    <>
+                      {/* Token Header */}
+                      <div className="mb-2 flex items-center justify-between">
+
+                        <div className="flex items-center gap-2">
+
+                          <span className="text-sm text-[#D8CFBC]">
+                            ✦
+                          </span>
+
+                          <span className="text-xs font-medium text-[#D8CFBC]">
+                            Remaining Tokens
+                          </span>
+
+                        </div>
+
+                        <span className="
+                  text-xs
+                  text-[#D8CFBC]/60
+                  transition-transform
+                  duration-300
+                  group-hover:translate-x-1
+                ">
+                          →
+                        </span>
+
+                      </div>
+
+                      {/* Token Count */}
+                      <div className="mb-2 flex items-center justify-between">
+
+                        <p className="text-base font-semibold text-[#FFFBF4]">
+                          {remaining.toLocaleString("en-IN")}
+                          <span className="ml-1 text-xs font-normal text-[#D8CFBC]/60">
+                            tokens left
+                          </span>
+                        </p>
+
+                        <span className="text-[11px] text-[#D8CFBC]/60">
+                          {Math.round(percentage)}%
+                        </span>
+
+                      </div>
+
+                      {/* Progress Bar */}
+                      <div className="
+                h-1.5
+                w-full
+                overflow-hidden
+                rounded-full
+                bg-[#D8CFBC]/15
+              ">
+                        <div
+                          className="
+                    h-full
+                    rounded-full
+                    bg-[#D8CFBC]
+                    transition-all
+                    duration-500
+                  "
+                          style={{
+                            width: `${percentage}%`,
+                          }}
+                        />
+                      </div>
+                    </>
+                  );
+                })()}
+
+              </button>
 
               {/* User Profile Button */}
               <button
@@ -356,22 +459,21 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
           hover:bg-[#565449]/25
         "
               >
+
                 {/* Avatar */}
-                <div
-                  className="
-            flex
-            h-10
-            w-10
-            shrink-0
-            items-center
-            justify-center
-            rounded-full
-            bg-[#F28B82]
-            text-xs
-            font-medium
-            text-white
-          "
-                >
+                <div className="
+          flex
+          h-10
+          w-10
+          shrink-0
+          items-center
+          justify-center
+          rounded-full
+          bg-[#F28B82]
+          text-xs
+          font-medium
+          text-white
+        ">
                   {user?.name
                     ? user.name.slice(0, 2).toUpperCase()
                     : "VP"}
@@ -379,11 +481,9 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
 
                 {/* User Info */}
                 <div className="min-w-0 flex-1">
-
                   <p className="truncate text-sm font-medium text-[#FFFBF4]">
                     {user?.name}
                   </p>
-
                 </div>
 
                 {/* More */}
@@ -392,35 +492,39 @@ const Sidebar = ({ isOpen, onClose, onOpen }) => {
                 </span>
 
               </button>
+
             </>
           ) : (
+
             /* Login Button */
             <button
               onClick={() => setShowLogin(true)}
               className="
-          flex
-          w-full
-          items-center
-          justify-center
-          rounded-xl
-          border
-          border-[#D8CFBC]/20
-          bg-[#565449]/20
-          px-4
-          py-3
-          text-sm
-          font-medium
-          text-[#FFFBF4]
-          transition
-          hover:bg-[#D8CFBC]
-          hover:text-[#11120D]
-          "
+        flex
+        w-full
+        items-center
+        justify-center
+        rounded-xl
+        border
+        border-[#D8CFBC]/20
+        bg-[#565449]/20
+        px-4
+        py-3
+        text-sm
+        font-medium
+        text-[#FFFBF4]
+        transition
+        hover:bg-[#D8CFBC]
+        hover:text-[#11120D]
+      "
             >
               Login
             </button>
+
           )}
 
         </div>
+
 
 
       </aside >

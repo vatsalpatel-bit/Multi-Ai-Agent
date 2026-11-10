@@ -3,6 +3,7 @@ import Home from "../Pages/Home.jsx";
 import Chat from "../Layouts/Chat.jsx";
 import Plans from "../Pages/Plans.jsx";
 import Checkout from "../Pages/Checkout.jsx";
+import PlanStatus from "../Pages/TokenUsageBar.jsx";
 
 const Router = createBrowserRouter([
     {
@@ -20,6 +21,10 @@ const Router = createBrowserRouter([
     {
         path: "/checkout/:planId",
         element: (<Checkout />)
+    },
+    {
+        path: "/plan-status",
+        element: (<PlanStatus />)
     }
 ]);
 
