@@ -12,7 +12,34 @@ app.use("/api/v1/agent", agentRouter)
 
 const PORT = process.env.PORT;
 
-app.listen(PORT, () => {
-    connectDb();
-    console.log(`Server running on PORT:${PORT}`)
-})
+const startServer = async () => {
+    try {
+        await connectDb();
+        const server = app.listen(PORT, () => {
+            console.log(`Server running on PORT:${PORT}`);
+        });
+        const shutdown = (signal) => {
+            console.log(`${signal} received. Clossing server...`);
+
+            server.close(async () => {
+                try {
+                    const mongoose = import("mongoose")
+                    await mongoose.default.disconnect();
+                    process.exit(0);
+                } catch (error) {
+                    console.log("Shutdown error", error);
+                    process.exit(1);
+                }
+            });
+        };
+
+        process.once("SIGTERM", () => shutdown("SIGTERM"));
+        process.once("SIGINT", () => shutdown("SIGINT"))
+
+    } catch (error) {
+        console.log("Application startup failed", error);
+        process.exit(1);
+    }
+};
+
+startServer();

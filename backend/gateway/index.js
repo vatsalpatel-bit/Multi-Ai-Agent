@@ -40,6 +40,12 @@ app.use(
     proxyWithHeader(process.env.AGENT_SERVICE)
 );
 
+app.use(
+    "/api/v1/agent",
+    guestOrAuthMiddleware,
+    proxyWithHeader(process.env.PAYMENT_SERVICE)
+);
+
 
 app.use("/api/v1/user", userRouter);
 

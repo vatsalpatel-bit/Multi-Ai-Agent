@@ -27,15 +27,7 @@ const plansSchema = new mongoose.Schema({
         trim: true,
         maxlength: 200,
     },
-    billingType: {
-        type: String,
-        enum: ["one_time", "monthly", "yearly"],
-        default: "one_time",
-    },
-    isActive: {
-        type: Boolean,
-        default: true,
-    },
+
 }, {
     timestamps: true
 });

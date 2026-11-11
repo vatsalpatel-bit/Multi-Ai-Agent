@@ -34,7 +34,7 @@ const startServer = async () => {
                     await mongoose.default.disconnect();
 
                     console.log("MongoDB disconnected.");
-                    process.exit(0);
+                    process.exit(0);  //termination application
 
                 } catch (error) {
                     console.log(`Shutdown error`, error);
