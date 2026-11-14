@@ -20,14 +20,8 @@ const plansSchema = new mongoose.Schema({
     },
     popular: {
         type: Boolean,
-        default: true,
+        default: false,
     },
-    description: {
-        type: String,
-        trim: true,
-        maxlength: 200,
-    },
-
 }, {
     timestamps: true
 });

@@ -188,6 +188,13 @@ export const saveMessageApi = async (req, res) => {
         const userId = req.headers["x-user-id"];
         const userType = req.headers["x-user-type"];
 
+        if (!userId || !userType) {
+            return res.status(401).json({
+                success: false,
+                message: "User identity is required"
+            });
+        }
+
         const { conversationId, role, content, images, artifacts } = req.body;
 
         const message = await Message.create({

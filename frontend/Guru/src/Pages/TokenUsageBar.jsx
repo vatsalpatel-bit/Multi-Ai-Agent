@@ -1,495 +1,579 @@
 
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 import {
     ArrowLeft,
     ArrowRight,
+    ArrowUpRight, 
     Zap,
-    Crown,
-    CalendarDays,
     Sparkles,
-    CheckCircle2,
-    Clock,
+    RefreshCw,
+    TrendingUp,
+    Wallet,
+    Coins,
+    Activity,
 } from "lucide-react";
+
+import {
+    ResponsiveContainer,
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    Tooltip,
+    CartesianGrid,
+} from "recharts";
 
 import Navbar from "../Layouts/Navbar";
 import Sidebar from "../Layouts/Sidebar";
-import { useState } from "react";
 
-const subscription = {
-    planName: "Starter",
-    totalTokens: 1000,
-    remainingTokens: 750,
-    price: 299,
-    status: "Active",
-    purchaseDate: "09 Nov 2026",
-    expiryDate: "09 Dec 2026",
-};
-
-const PlanStatus = () => {
-
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+const TokenStatus = () => {
     const navigate = useNavigate();
 
-    const usedTokens =
-        subscription.totalTokens - subscription.remainingTokens;
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+    const [period, setPeriod] = useState("7d");
 
-    const usedPercentage =
-        subscription.totalTokens > 0
-            ? Math.min(
-                100,
-                (usedTokens / subscription.totalTokens) * 100
-            )
-            : 0;
+    const [tokenData, setTokenData] = useState({
+        totalTokens: 0,
+        remainingTokens: 0,
+        usageHistory: [],
+    });
+
+    const fetchTokenBalance = async () => {
+        try {
+            setLoading(true);
+            setError("");
+
+            const { data } = await axios.get(
+                "/api/v1/token/balance",
+                { withCredentials: true }
+            );
+
+            setTokenData({
+                totalTokens: Number(data.totalTokens) || 0,
+                remainingTokens: Number(data.remainingTokens) || 0,
+                usageHistory: data.usageHistory || [],
+            });
+
+        } catch (err) {
+            console.error("Token API Error:", err);
+            console.error("Response:", err.response?.data);
+            console.error("Status:", err.response?.status);
+            console.error("URL:", err.config?.url);
+
+            setError(
+                err.response?.data?.message ||
+                err.message ||
+                "Unable to load your token information."
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchTokenBalance();
+    }, []);
+
+    const totalTokens = tokenData.totalTokens;
+    const remainingTokens = tokenData.remainingTokens;
+
+    const usedTokens = Math.max(
+        0,
+        totalTokens - remainingTokens
+    );
+
+    const usedPercentage = totalTokens > 0
+        ? Math.min(100, (usedTokens / totalTokens) * 100)
+        : 0;
+
+    const remainingPercentage = 100 - usedPercentage;
 
     const formatNumber = (value) =>
-        value.toLocaleString("en-IN");
+        new Intl.NumberFormat("en-IN").format(value);
+
+    const chartData = useMemo(() => {
+        const days = period === "7d" ? 7 : 30;
+
+        return tokenData.usageHistory.slice(-days);
+    }, [tokenData.usageHistory, period]);
+
+    const getBalanceStatus = () => {
+        if (totalTokens === 0) return "No tokens";
+        if (remainingTokens === 0) return "Exhausted";
+        if (remainingPercentage <= 20) return "Running low";
+        return "Healthy";
+    };
+
+    const getBalanceMessage = () => {
+        if (totalTokens === 0) {
+            return "Purchase your first token package to start using AI agents.";
+        }
+
+        if (remainingTokens === 0) {
+            return "Your balance is exhausted. Purchase more tokens to continue.";
+        }
+
+        if (remainingPercentage <= 20) {
+            return "Your balance is running low. Consider adding more tokens.";
+        }
+
+        return "Your wallet is in good shape. Keep creating with Guru AI.";
+    };
+
+    const CustomTooltip = ({ active, payload, label }) => {
+        if (!active || !payload?.length) return null;
+
+        return (
+            <div className="rounded-xl border border-[#D8CFBC]/20 bg-[#1D1D17] px-4 py-3 shadow-xl">
+                <p className="mb-2 text-xs text-[#D8CFBC]/60">
+                    {label}
+                </p>
+
+                <p className="text-sm font-semibold text-[#FFFBF4]">
+                    {formatNumber(payload[0].value)} tokens
+                </p>
+
+                <p className="mt-1 text-[10px] text-[#D8CFBC]/50">
+                    Consumed
+                </p>
+            </div>
+        );
+    };
 
     return (
         <div className="min-h-screen overflow-x-hidden bg-[#11120D] text-[#FFFBF4]">
 
-            {/* Navbar */}
             <Navbar />
 
-            {/* Sidebar */}
             <Sidebar
                 isOpen={isSidebarOpen}
                 onClose={() => setIsSidebarOpen(false)}
                 onOpen={() => setIsSidebarOpen(true)}
             />
 
-            {/* Main */}
-            <main className="min-h-[calc(100vh-82px)] px-5 py-8 sm:px-8 lg:px-10">
+            <main className="min-h-[calc(100dvh-82px)] px-4 py-8 sm:px-7 lg:px-10">
 
-                <div className="mx-auto max-w-[1050px]">
+                <div className="mx-auto max-w-[1120px]">
 
-                    {/* Back */}
-                    <button
-                        onClick={() => navigate("/")}
-                        className="
-              mb-8 flex items-center gap-2
-              text-sm text-[#D8CFBC]/65
-              transition hover:text-[#FFFBF4]
-            "
-                    >
-                        <ArrowLeft size={16} />
-                        Back to Workspace
-                    </button>
+                    {/* Page Header */}
+                    <header className="mb-9">
 
-                    {/* Heading */}
-                    <div className="mb-10">
+                        <button
+                            onClick={() => navigate("/")}
+                            className="mb-7 flex items-center gap-2 text-sm text-[#D8CFBC]/60 transition hover:text-[#FFFBF4]"
+                        >
+                            <ArrowLeft size={16} />
+                            Back to Workspace
+                        </button>
 
-                        <p className="
-              mb-3 text-[10px]
-              font-semibold tracking-[3px]
-              text-[#D8CFBC]
-            ">
-                            ACCOUNT SETTINGS
-                        </p>
+                        <div className="flex flex-wrap items-end justify-between gap-5">
 
-                        <h1 className="
-              font-serif text-4xl
-              tracking-tight sm:text-5xl
-            ">
-                            Your Subscription
-                        </h1>
+                            <div>
+                                <p className="mb-3 text-[10px] font-semibold tracking-[3px] text-[#D8CFBC]">
+                                    WALLET & ANALYTICS
+                                </p>
 
-                        <p className="mt-3 text-sm text-[#D8CFBC]/60">
-                            Manage your plan and keep track of your token balance.
-                        </p>
+                                <h1 className="font-serif text-4xl tracking-tight sm:text-5xl">
+                                    Token Overview
+                                </h1>
 
-                    </div>
+                                <p className="mt-3 text-sm text-[#D8CFBC]/55">
+                                    Your balance, consumption and usage insights.
+                                </p>
+                            </div>
 
-                    {/* Main Layout */}
-                    <div className="
-            grid grid-cols-1
-            gap-6 lg:grid-cols-[1.5fr_0.85fr]
-          ">
+                            <button
+                                onClick={fetchTokenBalance}
+                                disabled={loading}
+                                className="flex items-center gap-2 rounded-full border border-[#D8CFBC]/20 px-4 py-2.5 text-xs text-[#D8CFBC]/80 transition hover:border-[#D8CFBC]/50 hover:text-[#FFFBF4] disabled:opacity-50"
+                            >
+                                <RefreshCw
+                                    size={14}
+                                    className={loading ? "animate-spin" : ""}
+                                />
+                                Refresh balance
+                            </button>
 
-                        {/* LEFT */}
+                        </div>
+                    </header>
+
+                    {/* Loading */}
+                    {loading && (
+                        <div className="flex min-h-[380px] items-center justify-center gap-3 text-sm text-[#D8CFBC]/70">
+                            <RefreshCw size={19} className="animate-spin" />
+                            Loading your wallet...
+                        </div>
+                    )}
+
+                    {/* Error */}
+                    {!loading && error && (
+                        <div className="flex min-h-[300px] flex-col items-center justify-center gap-4 rounded-3xl border border-red-400/20 bg-red-400/[0.03]">
+                            <Activity size={30} className="text-red-400" />
+                            <p className="text-sm text-red-300">{error}</p>
+
+                            <button
+                                onClick={fetchTokenBalance}
+                                className="rounded-full border border-[#D8CFBC]/30 px-5 py-2 text-sm hover:bg-[#D8CFBC] hover:text-[#11120D]"
+                            >
+                                Retry
+                            </button>
+                        </div>
+                    )}
+
+                    {!loading && !error && (
                         <div className="space-y-6">
 
-                            {/* Current Plan */}
-                            <section className="
-                relative overflow-hidden
-                rounded-[24px]
-                border border-[#D8CFBC]/25
-                bg-gradient-to-br
-                from-[#D8CFBC]/[0.10]
-                to-transparent
-                p-6 sm:p-8
-              ">
+                            {/* Wallet Balance Hero */}
+                            <section className="relative overflow-hidden rounded-[26px] border border-[#D8CFBC]/20 bg-gradient-to-br from-[#28271F] via-[#1B1B15] to-[#15150F] p-6 sm:p-9">
 
-                                <div className="mb-8 flex items-center justify-between">
+                                <div className="pointer-events-none absolute -right-24 -top-28 h-72 w-72 rounded-full bg-[#D8CFBC]/[0.055] blur-3xl" />
 
-                                    <div className="flex items-center gap-2">
-                                        <Crown
-                                            size={18}
-                                            className="text-[#D8CFBC]"
-                                        />
+                                <div className="relative flex flex-col justify-between gap-8 sm:flex-row sm:items-center">
 
-                                        <span className="
-                      text-xs font-semibold
-                      tracking-[2px] text-[#D8CFBC]
-                    ">
-                                            CURRENT PLAN
-                                        </span>
+                                    <div>
+
+                                        <div className="mb-7 flex items-center gap-2">
+                                            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#D8CFBC]/20 bg-[#D8CFBC]/10">
+                                                <Wallet size={17} className="text-[#D8CFBC]" />
+                                            </div>
+
+                                            <span className="text-[11px] font-semibold tracking-[2px] text-[#D8CFBC]/80">
+                                                AVAILABLE BALANCE
+                                            </span>
+                                        </div>
+
+                                        <div className="flex flex-wrap items-baseline gap-3">
+                                            <h2 className="font-serif text-5xl tracking-tight sm:text-6xl">
+                                                {formatNumber(remainingTokens)}
+                                            </h2>
+
+                                            <span className="text-sm text-[#D8CFBC]/60">
+                                                tokens
+                                            </span>
+                                        </div>
+
+                                        <p className="mt-4 max-w-md text-sm leading-6 text-[#D8CFBC]/55">
+                                            {getBalanceMessage()}
+                                        </p>
+
+                                        <div className="mt-6 flex items-center gap-2">
+                                            <span className={`h-2 w-2 rounded-full ${remainingTokens === 0
+                                                    ? "bg-red-400"
+                                                    : remainingPercentage <= 20
+                                                        ? "bg-amber-400"
+                                                        : "bg-emerald-400"
+                                                }`} />
+
+                                            <span className="text-xs text-[#D8CFBC]/75">
+                                                {getBalanceStatus()}
+                                            </span>
+                                        </div>
+
                                     </div>
 
-                                    <span className="
-                    flex items-center gap-2
-                    rounded-full border
-                    border-[#D8CFBC]/25
-                    bg-[#D8CFBC]/10
-                    px-3 py-1.5
-                    text-xs text-[#D8CFBC]
-                  ">
-                                        <span className="h-1.5 w-1.5 rounded-full bg-[#D8CFBC]" />
-                                        {subscription.status}
-                                    </span>
+                                    <div className="relative flex shrink-0 flex-col gap-3 sm:items-end">
+
+                                        <div className="flex h-20 w-20 items-center justify-center rounded-[24px] border border-[#D8CFBC]/15 bg-[#D8CFBC]/[0.06] sm:h-24 sm:w-24">
+                                            <Coins
+                                                size={39}
+                                                strokeWidth={1.2}
+                                                className="text-[#D8CFBC]"
+                                            />
+                                        </div>
+
+                                        <button
+                                            onClick={() => navigate("/plans")}
+                                            className="flex items-center justify-center gap-2 rounded-full bg-[#D8CFBC] px-6 py-3 text-sm font-semibold text-[#11120D] transition hover:bg-[#FFFBF4]"
+                                        >
+                                            Add Tokens
+                                            <ArrowUpRight size={16} />
+                                        </button>
+
+                                    </div>
+
+                                </div>
+                            </section>
+
+                            {/* Analytics Section */}
+                            <section className="grid grid-cols-1 gap-6 lg:grid-cols-[1.65fr_0.8fr]">
+
+                                {/* Usage Chart */}
+                                <div className="rounded-[24px] border border-[#D8CFBC]/15 bg-[#191912] p-5 sm:p-7">
+
+                                    <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <TrendingUp
+                                                    size={18}
+                                                    className="text-[#D8CFBC]"
+                                                />
+
+                                                <h2 className="font-serif text-2xl">
+                                                    Usage Analytics
+                                                </h2>
+                                            </div>
+
+                                            <p className="mt-2 text-xs text-[#D8CFBC]/45">
+                                                Daily token consumption
+                                            </p>
+                                        </div>
+
+                                        <div className="flex rounded-full border border-[#D8CFBC]/15 bg-[#11120D] p-1">
+                                            {["7d", "30d"].map((item) => (
+                                                <button
+                                                    key={item}
+                                                    onClick={() => setPeriod(item)}
+                                                    className={`rounded-full px-4 py-2 text-[11px] font-medium transition ${period === item
+                                                            ? "bg-[#D8CFBC] text-[#11120D]"
+                                                            : "text-[#D8CFBC]/60 hover:text-[#FFFBF4]"
+                                                        }`}
+                                                >
+                                                    {item === "7d" ? "7 days" : "30 days"}
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                    </div>
+
+                                    <div className="h-[280px] w-full">
+
+                                        {chartData.length > 0 ? (
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <AreaChart
+                                                    data={chartData}
+                                                    margin={{
+                                                        top: 8,
+                                                        right: 8,
+                                                        left: -20,
+                                                        bottom: 0,
+                                                    }}
+                                                >
+
+                                                    <defs>
+                                                        <linearGradient
+                                                            id="usageArea"
+                                                            x1="0"
+                                                            y1="0"
+                                                            x2="0"
+                                                            y2="1"
+                                                        >
+                                                            <stop
+                                                                offset="0%"
+                                                                stopColor="#D8CFBC"
+                                                                stopOpacity={0.24}
+                                                            />
+                                                            <stop
+                                                                offset="100%"
+                                                                stopColor="#D8CFBC"
+                                                                stopOpacity={0}
+                                                            />
+                                                        </linearGradient>
+                                                    </defs>
+
+                                                    <CartesianGrid
+                                                        stroke="#D8CFBC"
+                                                        strokeOpacity={0.07}
+                                                        vertical={false}
+                                                    />
+
+                                                    <XAxis
+                                                        dataKey="date"
+                                                        axisLine={false}
+                                                        tickLine={false}
+                                                        tick={{ fill: "#AFA58F", fontSize: 10 }}
+                                                        tickMargin={12}
+                                                        minTickGap={20}
+                                                    />
+
+                                                    <YAxis
+                                                        axisLine={false}
+                                                        tickLine={false}
+                                                        tick={{ fill: "#AFA58F", fontSize: 10 }}
+                                                        tickFormatter={(value) =>
+                                                            new Intl.NumberFormat("en-IN", {
+                                                                notation: "compact",
+                                                            }).format(value)
+                                                        }
+                                                    />
+
+                                                    <Tooltip
+                                                        content={<CustomTooltip />}
+                                                        cursor={{
+                                                            stroke: "#D8CFBC",
+                                                            strokeOpacity: 0.2,
+                                                            strokeDasharray: "4 4",
+                                                        }}
+                                                    />
+
+                                                    <Area
+                                                        type="monotone"
+                                                        dataKey="usedTokens"
+                                                        stroke="#D8CFBC"
+                                                        strokeWidth={2.5}
+                                                        fill="url(#usageArea)"
+                                                        activeDot={{
+                                                            r: 5,
+                                                            fill: "#D8CFBC",
+                                                            stroke: "#191912",
+                                                            strokeWidth: 2,
+                                                        }}
+                                                    />
+
+                                                </AreaChart>
+                                            </ResponsiveContainer>
+                                        ) : (
+                                            <div className="flex h-full flex-col items-center justify-center text-center">
+                                                <Activity size={27} className="mb-3 text-[#D8CFBC]/40" />
+
+                                                <p className="text-sm text-[#D8CFBC]/70">
+                                                    No usage activity yet
+                                                </p>
+
+                                                <p className="mt-2 text-xs text-[#D8CFBC]/35">
+                                                    Your token consumption will appear here.
+                                                </p>
+                                            </div>
+                                        )}
+
+                                    </div>
 
                                 </div>
 
-                                <div className="
-                  flex flex-wrap
-                  items-end justify-between gap-5
-                ">
+                                {/* Usage Summary */}
+                                <div className="flex flex-col rounded-[24px] border border-[#D8CFBC]/15 bg-[#191912] p-6 sm:p-7">
 
-                                    <div>
-                                        <h2 className="font-serif text-4xl sm:text-5xl">
-                                            {subscription.planName}
+                                    <div className="mb-8 flex items-center gap-2">
+                                        <Activity size={18} className="text-[#D8CFBC]" />
+
+                                        <h2 className="font-serif text-2xl">
+                                            Overview
                                         </h2>
-
-                                        <p className="mt-2 text-sm text-[#D8CFBC]/65">
-                                            AI Agent Subscription
-                                        </p>
                                     </div>
 
-                                    <div>
-                                        <span className="font-serif text-4xl">
-                                            ₹{formatNumber(subscription.price)}
-                                        </span>
+                                    <div className="space-y-7">
 
-                                        <p className="mt-1 text-right text-xs text-[#D8CFBC]/55">
-                                            Purchase amount
-                                        </p>
-                                    </div>
+                                        <div>
+                                            <p className="text-xs text-[#D8CFBC]/45">
+                                                Total purchased
+                                            </p>
 
-                                </div>
-
-                                <div className="
-                  mt-8 grid grid-cols-2 gap-5
-                  border-t border-[#D8CFBC]/15 pt-6
-                ">
-
-                                    <div>
-                                        <p className="mb-2 text-xs text-[#D8CFBC]/55">
-                                            Purchased On
-                                        </p>
-
-                                        <div className="flex items-center gap-2 text-sm">
-                                            <CalendarDays
-                                                size={16}
-                                                className="text-[#D8CFBC]"
-                                            />
-                                            {subscription.purchaseDate}
+                                            <p className="mt-2 font-serif text-3xl">
+                                                {formatNumber(totalTokens)}
+                                            </p>
                                         </div>
+
+                                        <div className="h-px bg-[#D8CFBC]/10" />
+
+                                        <div>
+                                            <p className="text-xs text-[#D8CFBC]/45">
+                                                Total consumed
+                                            </p>
+
+                                            <p className="mt-2 font-serif text-3xl">
+                                                {formatNumber(usedTokens)}
+                                            </p>
+                                        </div>
+
+                                        <div className="h-px bg-[#D8CFBC]/10" />
+
+                                        <div>
+                                            <div className="mb-3 flex items-center justify-between">
+                                                <p className="text-xs text-[#D8CFBC]/45">
+                                                    Consumption rate
+                                                </p>
+
+                                                <p className="text-sm font-medium text-[#D8CFBC]">
+                                                    {Math.round(usedPercentage)}%
+                                                </p>
+                                            </div>
+
+                                            <div className="h-2 overflow-hidden rounded-full bg-[#D8CFBC]/10">
+                                                <div
+                                                    className="h-full rounded-full bg-[#D8CFBC] transition-all duration-700"
+                                                    style={{
+                                                        width: `${usedPercentage}%`,
+                                                    }}
+                                                />
+                                            </div>
+
+                                            <p className="mt-3 text-[11px] text-[#D8CFBC]/40">
+                                                {formatNumber(remainingTokens)} tokens remaining
+                                            </p>
+                                        </div>
+
                                     </div>
 
-                                    <div>
-                                        <p className="mb-2 text-xs text-[#D8CFBC]/55">
-                                            Expires On
+                                    <div className="mt-auto pt-8">
+                                        <p className="text-[10px] leading-5 text-[#D8CFBC]/35">
+                                            Usage is calculated from your recorded token transactions.
                                         </p>
-
-                                        <div className="flex items-center gap-2 text-sm">
-                                            <Clock
-                                                size={16}
-                                                className="text-[#D8CFBC]"
-                                            />
-                                            {subscription.expiryDate}
-                                        </div>
                                     </div>
 
                                 </div>
 
                             </section>
 
-                            {/* Token Usage */}
-                            <section className="
-                rounded-[24px]
-                border border-[#D8CFBC]/20
-                bg-[#D8CFBC]/[0.025]
-                p-6 sm:p-8
-              ">
+                            {/* Purchase CTA */}
+                            <section className="relative overflow-hidden rounded-[24px] border border-[#D8CFBC]/20 bg-gradient-to-r from-[#25241D] to-[#181811] p-6 sm:p-8">
 
-                                <div className="
-                  mb-7 flex items-center justify-between
-                ">
+                                <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
 
-                                    <div>
-                                        <div className="flex items-center gap-2">
-                                            <Zap
-                                                size={19}
+                                    <div className="flex items-start gap-4">
+
+                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[#D8CFBC]/20 bg-[#D8CFBC]/10">
+                                            <Sparkles
+                                                size={23}
                                                 className="text-[#D8CFBC]"
                                             />
-
-                                            <h2 className="font-serif text-2xl">
-                                                Token Usage
-                                            </h2>
                                         </div>
 
-                                        <p className="mt-2 text-xs text-[#D8CFBC]/55">
-                                            Your current token consumption
-                                        </p>
-                                    </div>
+                                        <div>
+                                            <p className="mb-2 text-[10px] font-semibold tracking-[2px] text-[#D8CFBC]/70">
+                                                KEEP CREATING
+                                            </p>
 
-                                </div>
+                                            <h2 className="font-serif text-2xl sm:text-3xl">
+                                                Ready for more?
+                                            </h2>
 
-                                {/* Remaining Balance */}
-                                <div className="mb-7">
-
-                                    <p className="mb-2 text-xs text-[#D8CFBC]/60">
-                                        Available Balance
-                                    </p>
-
-                                    <div className="flex items-baseline gap-2">
-
-                                        <span className="
-                      font-serif text-5xl
-                      tracking-tight
-                    ">
-                                            {formatNumber(subscription.remainingTokens)}
-                                        </span>
-
-                                        <span className="text-sm text-[#D8CFBC]/65">
-                                            tokens
-                                        </span>
+                                            <p className="mt-2 max-w-lg text-sm leading-6 text-[#D8CFBC]/50">
+                                                Get additional tokens and unlock more possibilities with your AI agents.
+                                            </p>
+                                        </div>
 
                                     </div>
 
-                                </div>
-
-                                {/* Progress Bar */}
-                                <div className="mb-5">
-
-                                    <div className="
-                    mb-3 flex items-center
-                    justify-between text-xs
-                  ">
-                                        <span className="text-[#D8CFBC]/65">
-                                            Usage progress
-                                        </span>
-
-                                        <span className="text-[#D8CFBC]">
-                                            {Math.round(usedPercentage)}% used
-                                        </span>
-                                    </div>
-
-                                    <div className="
-                    h-2.5 w-full overflow-hidden
-                    rounded-full bg-[#D8CFBC]/10
-                  ">
-                                        <div
-                                            className="
-                        h-full rounded-full
-                        bg-[#D8CFBC]
-                        transition-all duration-700
-                      "
-                                            style={{
-                                                width: `${usedPercentage}%`,
-                                            }}
-                                        />
-                                    </div>
-
-                                </div>
-
-                                {/* Used / Total */}
-                                <div className="
-                  flex items-center justify-between
-                  border-t border-[#D8CFBC]/15 pt-5
-                ">
-
-                                    <div>
-                                        <p className="text-xs text-[#D8CFBC]/55">
-                                            Used Tokens
-                                        </p>
-
-                                        <p className="mt-1 text-lg font-semibold">
-                                            {formatNumber(usedTokens)}
-                                        </p>
-                                    </div>
-
-                                    <div className="text-right">
-                                        <p className="text-xs text-[#D8CFBC]/55">
-                                            Total Allocation
-                                        </p>
-
-                                        <p className="mt-1 text-lg font-semibold">
-                                            {formatNumber(subscription.totalTokens)}
-                                        </p>
-                                    </div>
+                                    <button
+                                        onClick={() => navigate("/plans")}
+                                        className="flex shrink-0 items-center justify-center gap-3 rounded-full bg-[#D8CFBC] px-7 py-3.5 text-sm font-semibold text-[#11120D] transition hover:bg-[#FFFBF4]"
+                                    >
+                                        Explore Packages
+                                        <ArrowRight size={17} />
+                                    </button>
 
                                 </div>
 
                             </section>
 
                         </div>
+                    )}
 
-                        {/* RIGHT */}
-                        <aside className="space-y-6">
-
-                            {/* Upgrade Card */}
-                            <section className="
-                relative overflow-hidden
-                rounded-[24px]
-                border border-[#D8CFBC]/30
-                bg-gradient-to-br
-                from-[#D8CFBC]/[0.12]
-                to-transparent
-                p-6 sm:p-7
-              ">
-
-                                <div className="
-                  mb-5 flex h-12 w-12
-                  items-center justify-center
-                  rounded-xl border
-                  border-[#D8CFBC]/25
-                  bg-[#D8CFBC]/10
-                ">
-                                    <Sparkles
-                                        size={23}
-                                        className="text-[#D8CFBC]"
-                                    />
-                                </div>
-
-                                <p className="
-                  mb-2 text-[10px]
-                  font-semibold tracking-[2px]
-                  text-[#D8CFBC]
-                ">
-                                    GROW WITH GURU AI
-                                </p>
-
-                                <h2 className="
-                  font-serif text-3xl
-                  leading-tight
-                ">
-                                    Need more tokens?
-                                </h2>
-
-                                <p className="
-                  mt-3 text-sm leading-6
-                  text-[#D8CFBC]/65
-                ">
-                                    Get more tokens and continue using your AI agents without interruption.
-                                </p>
-
-                                <button
-                                    onClick={() => navigate("/plans")}
-                                    className="
-                    mt-7 flex w-full
-                    items-center justify-center gap-2
-                    rounded-full bg-[#D8CFBC]
-                    px-5 py-3.5
-                    text-sm font-semibold
-                    text-[#11120D]
-                    transition-all duration-300
-                    hover:bg-[#FFFBF4]
-                  "
-                                >
-                                    Explore Plans
-                                    <ArrowRight size={17} />
-                                </button>
-
-                            </section>
-
-                            {/* Subscription Details */}
-                            <section className="
-                rounded-[24px]
-                border border-[#D8CFBC]/20
-                bg-[#D8CFBC]/[0.025]
-                p-6
-              ">
-
-                                <h2 className="mb-5 font-serif text-xl">
-                                    Subscription Details
-                                </h2>
-
-                                <div className="space-y-5">
-
-                                    <div className="flex items-center justify-between gap-3">
-
-                                        <span className="text-sm text-[#D8CFBC]/60">
-                                            Plan Name
-                                        </span>
-
-                                        <span className="text-sm font-medium">
-                                            {subscription.planName}
-                                        </span>
-
-                                    </div>
-
-                                    <div className="flex items-center justify-between gap-3">
-
-                                        <span className="text-sm text-[#D8CFBC]/60">
-                                            Plan Status
-                                        </span>
-
-                                        <span className="flex items-center gap-1.5 text-sm text-[#D8CFBC]">
-                                            <CheckCircle2 size={15} />
-                                            {subscription.status}
-                                        </span>
-
-                                    </div>
-
-                                    <div className="flex items-center justify-between gap-3">
-
-                                        <span className="text-sm text-[#D8CFBC]/60">
-                                            Purchase Date
-                                        </span>
-
-                                        <span className="text-sm">
-                                            {subscription.purchaseDate}
-                                        </span>
-
-                                    </div>
-
-                                    <div className="flex items-center justify-between gap-3">
-
-                                        <span className="text-sm text-[#D8CFBC]/60">
-                                            Expiry Date
-                                        </span>
-
-                                        <span className="text-sm">
-                                            {subscription.expiryDate}
-                                        </span>
-
-                                    </div>
-
-                                </div>
-
-                            </section>
-
-                        </aside>
-
-                    </div>
-
-                    {/* Footer */}
-                    <footer className="
-            mt-10 border-t border-[#D8CFBC]/15
-            py-5 text-center
-          ">
-                        <p className="text-xs text-[#D8CFBC]/40">
+                    <footer className="mt-10 border-t border-[#D8CFBC]/10 py-6 text-center">
+                        <p className="text-xs text-[#D8CFBC]/35">
                             Guru AI · Your intelligent AI workspace.
                         </p>
                     </footer>
 
                 </div>
-
             </main>
-
         </div>
     );
 };
 
-export default PlanStatus;
+export default TokenStatus;

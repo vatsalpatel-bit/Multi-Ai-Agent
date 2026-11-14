@@ -27,7 +27,7 @@ export const loginApi = async (req, res) => {
             })
         }
         const sessionId = crypto.randomUUID();
-        redis.set(`session:${sessionId}`, JSON.stringify({
+        await redis.set(`session:${sessionId}`, JSON.stringify({
             userId: user._id,
             name: user.name,
             email: user.email,

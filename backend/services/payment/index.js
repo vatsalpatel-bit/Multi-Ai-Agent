@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import connectDB from "./config/db.js";
+import plansRouter from "./routes/plans.route.js";
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.get("/health", (req, res) => {
         success: true
     })
 });
+app.use("/api/v1/payment", plansRouter);
 
 const PORT = process.env.PORT;
 

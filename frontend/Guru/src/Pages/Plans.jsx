@@ -5,36 +5,56 @@ import { ArrowRight, Check, Crown, Layers } from "lucide-react";
 import Navbar from "../Layouts/Navbar";
 import Sidebar from "../Layouts/Sidebar";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { getPlansApi } from "../Services/plansApi";
+import { useDispatch, useSelector } from "react-redux";
+import { setAllPlans } from "../redux/slices/plans";
 
-const plans = [
-    {
-        id: "starter",
-        name: "Starter",
-        tokens: "1,000",
-        price: "299",
-        popular: false,
-    },
-    {
-        id: "pro",
-        name: "Pro",
-        tokens: "10,000",
-        price: "799",
-        popular: true,
-    },
-    {
-        id: "team",
-        name: "Team",
-        tokens: "50,000",
-        price: "2,999",
-        popular: false,
-    },
-];
+// const plans = [
+//     {
+//         id: "starter",
+//         name: "Starter",
+//         tokens: "1,000",
+//         price: "299",
+//         popular: false,
+//     },
+//     {
+//         id: "pro",
+//         name: "Pro",
+//         tokens: "10,000",
+//         price: "799",
+//         popular: true,
+//     },
+//     {
+//         id: "team",
+//         name: "Team",
+//         tokens: "50,000",
+//         price: "2,999",
+//         popular: false,
+//     },
+// ];
 
 const Plans = () => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
     const [selectedPlan, setSelectedPlan] = useState(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    const navigate = useNavigate();
+    const plans = useSelector((state) => state.plans.allPlans);
+  
+    useEffect(() => {
+        const fetchGetPlansApi = async () => {
+            try {
+                const data = await getPlansApi();
+                dispatch(setAllPlans(data));
+            } catch (error) {
+                console.log("Plans api faild", error.message);
+
+            }
+        }
+        fetchGetPlansApi();
+    }, [dispatch])
 
     return (
         <div className="h-dvh overflow-hidden bg-[#11120D] text-[#FFFBF4]">
@@ -125,12 +145,12 @@ const Plans = () => {
             lg:grid-cols-3
           ">
 
-                        {plans.map((plan) => {
+                        {plans?.map((plan) => {
                             const isSelected = selectedPlan === plan.id;
 
                             return (
                                 <article
-                                    key={plan.id}
+                                    key={plan._id}
                                     className={`
                     group
                     relative
@@ -263,7 +283,7 @@ const Plans = () => {
                       text-[#FFFBF4]
                       sm:text-2xl
                     ">
-                                            {plan.tokens}
+                                            {plan.token}
                                         </span>
 
                                         <span className="
@@ -293,7 +313,7 @@ const Plans = () => {
                                     <div className="mt-auto">
                                         <button
                                             type="button"
-                                            onClick={() => navigate(`/checkout/${plan.id}`)}
+                                            onClick={() => navigate(`/checkout/${plan._id}`)}
                                             className="
       group/button
       flex w-full items-center justify-center gap-2

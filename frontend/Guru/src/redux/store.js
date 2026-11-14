@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./slices/userSlice.js"
 import chatReducer from "./slices/chatSlice.js"
 import artifactReducer from "./slices/artifactSlice.js";
+import plansReducer from "./slices/plans.js"
 
 const store = configureStore({
     reducer: {
         user: userReducer,
         chat: chatReducer,
         artifact: artifactReducer,
+        plans: plansReducer,
     },
     devTools: true,
 });

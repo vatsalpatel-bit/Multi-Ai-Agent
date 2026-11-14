@@ -39,13 +39,11 @@ app.use(
     guestOrAuthMiddleware,
     proxyWithHeader(process.env.AGENT_SERVICE)
 );
-
 app.use(
-    "/api/v1/agent",
+    "/api/v1/payment",
     guestOrAuthMiddleware,
     proxyWithHeader(process.env.PAYMENT_SERVICE)
 );
-
 
 app.use("/api/v1/user", userRouter);
 
